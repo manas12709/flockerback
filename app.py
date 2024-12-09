@@ -58,6 +58,7 @@ def get_manas():
         "Owns_Cars": ["2024-Model S Plaid", "2024-Mercedes", "2023-Model X", "2024-Mercedes"]
     })
 
+    return jsonify(InfoDb)
 
 # add an api endpoint to flask app
 @app.route('/api/adi')
