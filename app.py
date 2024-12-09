@@ -8,29 +8,88 @@ CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 # ... your existing Flask
 
 # add an api endpoint to flask app
-@app.route('/api/data')
+@app.route('/api/yash')
 def get_data():
     # start a list, to be used like a information database
     InfoDb = []
 
     # add a row to list, an Info record
     InfoDb.append({
-        "FirstName": "John",
-        "LastName": "Mortensen",
-        "DOB": "October 21",
-        "Residence": "San Diego",
-        "Email": "jmortensen@powayusd.com",
-        "Owns_Cars": ["2015-Fusion", "2011-Ranger", "2003-Excursion", "1997-F350", "1969-Cadillac"]
+        "FirstName": "Yash",
+        "LastName": "Parikh",
+        "DOB": "July 31",
+        "Residence": "Antartica",
+        "Email": "yashp51875@stu.powayusd.com",
+        "Owns_Cars": ["2024-McLaren-W1-HotWheels"]
     })
+
+    return jsonify(InfoDb)
+
+@app.route('/api/anvay')
+def get_anvay():
+    # start a list, to be used like a information database
+    InfoDb = []
 
     # add a row to list, an Info record
     InfoDb.append({
-        "FirstName": "Shane",
-        "LastName": "Lopez",
-        "DOB": "February 27",
+        "FirstName": "Anvay",
+        "LastName": "Vahia",
+        "DOB": "January 29",
+        "Residence": "North Pole",
+        "Email": "anvayv22800@stu.powayusd.com",
+        "Owns_Cars": ["2023 Tesla Model Y", "2022 Hyundai Palisade"]
+    })
+    
+    return jsonify(InfoDb)
+
+# add an api endpoint to flask app
+@app.route('/api/manas')
+def get_data():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Manas",
+        "LastName": "Goel",
+        "DOB": "July 12",
         "Residence": "San Diego",
-        "Email": "slopez@powayusd.com",
-        "Owns_Cars": ["2021-Insight"]
+        "Email": "manas.g67038@stu.powayusd.com",
+        "Owns_Cars": ["2024-Model S Plaid", "2024-Mercedes", "2023-Model X", "2024-Mercedes"]
+    })
+
+
+# add an api endpoint to flask app
+@app.route('/api/adi')
+def get_adi():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Aditya",
+        "LastName": "Katre",
+        "DOB": "January 19",
+        "Residence": "North Carolina",
+        "Email": "adityak21664@stu.powayusd.com",
+        "Owns_Cars": ["2022 Tesla Model Y Long Range", "2018 BMW 328i"]
+    })
+    
+    return jsonify(InfoDb)
+
+@app.route('/api/mihir')
+def get_data():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Mihir",
+        "LastName": "Bapat",
+        "DOB": "May 26",
+        "Residence": "Shrewsbury United Kingdom",
+        "Email": "mihirb59967@stu.powayusd.com",
+        "Owns_Cars": ["All of the above"]
     })
     
     return jsonify(InfoDb)
@@ -51,5 +110,5 @@ def say_hello():
     return html_content
 
 if __name__ == '__main__':
-    # starts flask server on default port, http://127.0.0.1:5001
-    app.run(port=5001)
+    # starts flask server on default port, http://127.0.0.1:3003
+    app.run(port=3333)
