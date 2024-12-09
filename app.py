@@ -87,7 +87,7 @@ def get_mihir():
         "FirstName": "Mihir",
         "LastName": "Bapat",
         "DOB": "May 26",
-        "Residence": "Shrewsbury United Kingdom",
+        "Residence": "Shrewsbury, United Kingdom",
         "Email": "mihirb59967@stu.powayusd.com",
         "Owns_Cars": ["2022 Tesla Model Y Long Range All-Wheel Drive"]
     })
