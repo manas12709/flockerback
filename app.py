@@ -9,7 +9,7 @@ CORS(app, supports_credentials=True, origins='*')  # Allow all origins (*)
 
 # add an api endpoint to flask app
 @app.route('/api/yash')
-def get_data():
+def get_yash():
     # start a list, to be used like a information database
     InfoDb = []
 
@@ -44,7 +44,7 @@ def get_anvay():
 
 # add an api endpoint to flask app
 @app.route('/api/manas')
-def get_data():
+def get_manas():
     # start a list, to be used like a information database
     InfoDb = []
 
@@ -78,7 +78,7 @@ def get_adi():
     return jsonify(InfoDb)
 
 @app.route('/api/mihir')
-def get_data():
+def get_mihir():
     # start a list, to be used like a information database
     InfoDb = []
 
