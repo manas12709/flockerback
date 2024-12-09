@@ -89,7 +89,7 @@ def get_mihir():
         "DOB": "May 26",
         "Residence": "Shrewsbury United Kingdom",
         "Email": "mihirb59967@stu.powayusd.com",
-        "Owns_Cars": ["All of the above"]
+        "Owns_Cars": ["2022 Tesla Model Y Long Range All-Wheel Drive"]
     })
     
     return jsonify(InfoDb)
@@ -100,13 +100,62 @@ def say_hello():
     html_content = """
     <html>
     <head>
-        <title>Hellox</title>
+        <title>Group Members</title>
     </head>
     <body>
-        <h2>Hello, World!</h2>
+        <h2>Group Members Data</h2>
+        <table border="1" style="width: 100%; text-align: left;">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Date of Birth</th>
+                    <th>Residence</th>
+                    <th>Email</th>
+                    <th>Owns Cars</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+    
+    # List of API endpoints
+    api_endpoints = [
+        '/api/yash',
+        '/api/anvay',
+        '/api/manas',
+        '/api/adi',
+        '/api/mihir'
+    ]
+    
+    # Fetch data from APIs and populate the table
+    for endpoint in api_endpoints:
+        # Fetch data from the endpoint
+        try:
+            response = app.test_client().get(endpoint)
+            data = response.get_json()
+            if data:  # Iterate over the data if it exists
+                for member in data:
+                    html_content += f"""
+                    <tr>
+                        <td>{member['FirstName']}</td>
+                        <td>{member['LastName']}</td>
+                        <td>{member['DOB']}</td>
+                        <td>{member['Residence']}</td>
+                        <td>{member['Email']}</td>
+                        <td>{', '.join(member['Owns_Cars'])}</td>
+                    </tr>
+                    """
+        except Exception as e:
+            html_content += f"<tr><td colspan='6'>Error fetching data from {endpoint}: {str(e)}</td></tr>"
+    
+    # Close the table and body
+    html_content += """
+            </tbody>
+        </table>
     </body>
     </html>
     """
+    
     return html_content
 
 if __name__ == '__main__':
