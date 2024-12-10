@@ -27,6 +27,8 @@ from api.messages_api import messages_api # Adi added this, messages for his web
 from api.carphoto import car_api
 from api.carChat import car_chat_api
 
+from api.teaminfo import teaminfo_api
+
 from api.vote import vote_api
 # database Initialization functions
 from model.carChat import CarChat
@@ -53,7 +55,7 @@ app.register_blueprint(nestPost_api)
 app.register_blueprint(nestImg_api)
 app.register_blueprint(vote_api)
 app.register_blueprint(car_api)
-
+app.register_blueprint(teaminfo_api)
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
 
