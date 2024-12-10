@@ -54,8 +54,8 @@ def get_manas():
         "LastName": "Goel",
         "DOB": "July 12",
         "Residence": "San Diego",
-        "Email": "manas.g67038@stu.powayusd.com",
-        "Owns_Cars": ["2024-Model S Plaid", "2024-Mercedes", "2023-Model X", "2024-Mercedes"]
+        "Email": "manasg67038@stu.powayusd.com",
+        "Owns_Cars": ["2024-Tesla", "2024-Mercedes"]
     })
 
     return jsonify(InfoDb)
@@ -95,6 +95,24 @@ def get_mihir():
     
     return jsonify(InfoDb)
 
+# add an api endpoint to flask app
+@app.route('/api/pranav')
+def get_yash():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Pranav",
+        "LastName": "Santhosh",
+        "DOB": "May 12",
+        "Residence": "California",
+        "Email": "pranavs22638@stu.powayusd.com",
+        "Owns_Cars": ["2023 Rivian SUV"]
+    })
+
+    return jsonify(InfoDb)
+
 # add an HTML endpoint to flask app
 @app.route('/')
 def say_hello():
@@ -125,7 +143,8 @@ def say_hello():
         '/api/anvay',
         '/api/manas',
         '/api/adi',
-        '/api/mihir'
+        '/api/mihir',
+        '/api/pranav'
     ]
     
     # Fetch data from APIs and populate the table
@@ -160,5 +179,5 @@ def say_hello():
     return html_content
 
 if __name__ == '__main__':
-    # starts flask server on default port, http://127.0.0.1:3003
+    # starts flask server on default port, http://127.0.0.1:3333
     app.run(port=3333)
