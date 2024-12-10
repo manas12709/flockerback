@@ -54,8 +54,8 @@ def get_manas():
         "LastName": "Goel",
         "DOB": "July 12",
         "Residence": "San Diego",
-        "Email": "manas.g67038@stu.powayusd.com",
-        "Owns_Cars": ["2024-Model S Plaid", "2024-Mercedes", "2023-Model X", "2024-Mercedes"]
+        "Email": "manasg67038@stu.powayusd.com",
+        "Owns_Cars": ["2024-Tesla", "2024-Mercedes"]
     })
 
     return jsonify(InfoDb)
