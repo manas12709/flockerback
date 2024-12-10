@@ -95,6 +95,24 @@ def get_mihir():
     
     return jsonify(InfoDb)
 
+# add an api endpoint to flask app
+@app.route('/api/pranav')
+def get_yash():
+    # start a list, to be used like a information database
+    InfoDb = []
+
+    # add a row to list, an Info record
+    InfoDb.append({
+        "FirstName": "Pranav",
+        "LastName": "Santhosh",
+        "DOB": "May 12",
+        "Residence": "California",
+        "Email": "pranavs22638@stu.powayusd.com",
+        "Owns_Cars": ["2023 Rivian SUV"]
+    })
+
+    return jsonify(InfoDb)
+
 # add an HTML endpoint to flask app
 @app.route('/')
 def say_hello():
@@ -125,7 +143,8 @@ def say_hello():
         '/api/anvay',
         '/api/manas',
         '/api/adi',
-        '/api/mihir'
+        '/api/mihir',
+        '/api/pranav'
     ]
     
     # Fetch data from APIs and populate the table
