@@ -50,6 +50,14 @@ class StudentAPI:
                 "Residence": "North Pole",
                 "Email": "anvayv22800@stu.powayusd.com",
                 "Owns_Cars": ["2023 Tesla Model Y", "2022 Hyundai Palisade"]
+                },
+            "Pranav": {
+                "FirstName": "Pranav",
+                "LastName": "Santhosh",
+                "DOB": "May 12",
+                "Residence": "California",
+                "Email": "pranavs22638@stu.powayusd.com",
+                "Owns_Cars": ["2023 Rivian SUV", "2024 Toyota Prius"]
             }
         }
         return members.get(name)
@@ -74,6 +82,10 @@ class StudentAPI:
         def get(self):
             mihir_details = StudentAPI.get_member("Mihir")
             return jsonify(mihir_details)
+    class _Pranav(Resource): 
+        def get(self):
+            pranav_details = StudentAPI.get_member("Pranav")
+            return jsonify(pranav_details)
     class _Bulk(Resource):
         def get(self):
             # Use the helper method to get the team member's details
@@ -82,7 +94,8 @@ class StudentAPI:
             adi_details = StudentAPI.get_member("Adi")
             yash_details = StudentAPI.get_member("Yash")
             anvay_details = StudentAPI.get_member("Anvay")
-            return jsonify({"students": [mihir_details, manas_details, adi_details, yash_details, anvay_details]})
+            pranav_details = StudentAPI.get_member("Pranav")
+            return jsonify({"students": [mihir_details, manas_details, adi_details, yash_details, anvay_details,pranav_details]})
 
 
     # building RESTapi endpoint
@@ -91,6 +104,7 @@ class StudentAPI:
     api.add_resource(_Manas, '/member/manas')
     api.add_resource(_Mihir, '/member/mihir')
     api.add_resource(_Anvay, '/member/anvay')
+    api.add_resource(_Pranav, '/member/pranav')
     api.add_resource(_Bulk, '/members')
 
     
