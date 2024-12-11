@@ -190,3 +190,4 @@ def initGroups():
             except IntegrityError:
                 db.session.rollback()
                 print(f"Records exist, duplicate email, or error: {group._name}")
+
