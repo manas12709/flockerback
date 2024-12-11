@@ -181,6 +181,12 @@ def initChannels():
             Channel(name='Cyber Patriots', group_id=activity_hub.id),
             Channel(name='Robotics', group_id=activity_hub.id),
         ]
+
+        #Prism Channels
+        random_chatroom = Group.query.filter_by(_name='Random Chatroom').first()
+        prism_channels = [
+            Channel(name='RandChat', group_id=random_chatroom.id),
+        ]
         
         #P3 Channels Below
          # Share and Care channels below:
@@ -250,7 +256,7 @@ def initChannels():
         ]
         
         
-        channels = home_page_channels + shared_interest_channels + vote_for_the_goat_channels + rate_and_relate_channels
+        channels = home_page_channels + shared_interest_channels + vote_for_the_goat_channels + rate_and_relate_channels + prism_channels
         for channel in channels:
             try:
                 db.session.add(channel)
