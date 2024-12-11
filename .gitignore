@@ -23,3 +23,8 @@ instance/volumes/*
 instance/data.json
 instance/data.json.*.bak
 
+# Ignore SQLite database files
+instance/*.sqlite
+instance/*.db
+instance/*.sqlite3
+
