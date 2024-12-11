@@ -97,7 +97,7 @@ def get_mihir():
 
 # add an api endpoint to flask app
 @app.route('/api/pranav')
-def get_yash():
+def get_pranav():
     # start a list, to be used like a information database
     InfoDb = []
 
