@@ -19,6 +19,7 @@ backup/
 
 # instance data, databases
 instance/volumes/
+instance/volumes/*
 instance/data.json
 instance/data.json.*.bak
 
