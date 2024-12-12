@@ -179,6 +179,7 @@ def initGroups():
         prism_section = Section.query.filter_by(_name='Prism').first()
         groups += [
             Group(name='Random Chatroom', section_id=prism_section.id, moderators=[User.query.get(1)]),
+            Group(name='Daily Question', section_id=prism_section.id, moderators=[User.query.get(1)]),
         ]
 
         for group in groups:
@@ -189,3 +190,4 @@ def initGroups():
             except IntegrityError:
                 db.session.rollback()
                 print(f"Records exist, duplicate email, or error: {group._name}")
+

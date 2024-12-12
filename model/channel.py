@@ -163,8 +163,11 @@ def initChannels():
 
         #Prism Channels
         random_chatroom = Group.query.filter_by(_name='Random Chatroom').first()
+        daily_question = Group.query.filter_by(_name='Daily Question').first()
         prism_channels = [
             Channel(name='RandChat', group_id=random_chatroom.id),
+            Channel(name='DailyQuestion', group_id=daily_question.id),
+
         ]
         
         channels = home_page_channels + prism_channels
