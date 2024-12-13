@@ -556,9 +556,15 @@ def initUsers():
             uid='niko',
             password='123niko',
             pfp='niko.png',
-            interests="Electrical Engineering, Innovation, Nature"
+            interests="Electrical Engineering, Innovation, Nature, Inventing"
         )
-        users = [u1, u2, u3]
+        u4 = User(
+            name='Bobby Bapat',
+            uid='bobby',
+            password='1111',
+            interests="Nature, Physics"
+        )
+        users = [u1, u2, u3, u4]
         
         for user in users:
             try:
