@@ -23,7 +23,7 @@ from api.channel import channel_api
 from api.group import group_api
 from api.section import section_api
 from api.nestPost import nestPost_api # Justin added this, custom format for his website
-from api.messages_api import messages_api # Adi added this, messages for his website
+from api.polls_api import polls_api # Adi added this, messages for his website
 
 from api.teaminfo import teaminfo_api
 
@@ -40,7 +40,7 @@ from model.vote import Vote, initVotes
 # server only Views
 
 # register URIs for api endpoints
-app.register_blueprint(messages_api) # Adi added this, messages for his website
+app.register_blueprint(polls_api) # Adi added this, messages for his website
 app.register_blueprint(user_api)
 app.register_blueprint(pfp_api) 
 app.register_blueprint(post_api)
