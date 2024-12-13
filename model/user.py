@@ -59,11 +59,12 @@ class User(db.Model, UserMixin):
     _role = db.Column(db.String(20), default="User", nullable=False)
     _pfp = db.Column(db.String(255), unique=False, nullable=True)
     _car = db.Column(db.String(255), unique=False, nullable=True)
-   
+    _interests = db.Column(db.String(255), unique=False, nullable=True)  # New field added here
+
     posts = db.relationship('Post', backref='author', lazy=True)
                                  
     
-    def __init__(self, name, uid, password="", role="User", pfp='', car='', email='?'):
+    def __init__(self, name, uid, password="", role="User", pfp='', car='', email='?', interests=''):
         """
         Constructor, 1st step in object creation.
         
@@ -73,6 +74,7 @@ class User(db.Model, UserMixin):
             password (str): The password for the user.
             role (str): The role of the user within the application. Defaults to "User".
             pfp (str): The path to the user's profile picture. Defaults to an empty string.
+            interests (str): The user's interests. Defaults to an empty string.
         """
         self._name = name
         self._uid = uid
@@ -81,8 +83,32 @@ class User(db.Model, UserMixin):
         self._role = role
         self._pfp = pfp
         self._car = car
+        self._interests = interests
 
-    # UserMixin/Flask-Login requires a get_id method to return the id as a string
+
+    @property
+    def interests(self):
+        """
+        Gets the user's interests.
+        
+        Returns:
+            str: The user's interests.
+        """
+        return self._interests
+
+    @interests.setter
+    def interests(self, interests):
+        """
+        Sets the user's interests.
+        
+        Args:
+            interests (str): The new interests for the user.
+        """
+        if isinstance(interests, str):
+            self._interests = interests
+        else:
+            self._interests = ""
+
     def get_id(self):
         """
         Returns the user's ID as a string.
@@ -337,7 +363,8 @@ class User(db.Model, UserMixin):
             "email": self.email,
             "role": self._role,
             "pfp": self._pfp,
-            "car": self._car
+            "car": self._car,
+            "interests": self._interests  # Include interests in the dictionary
         }
         return data
         
@@ -358,6 +385,7 @@ class User(db.Model, UserMixin):
         uid = inputs.get("uid", "")
         password = inputs.get("password", "")
         pfp = inputs.get("pfp", None)
+        interests = inputs.get("interests", None)
 
         # Update table with new data
         if name:
@@ -368,6 +396,8 @@ class User(db.Model, UserMixin):
             self.set_password(password)
         if pfp is not None:
             self.pfp = pfp
+        if interests is not None:
+            self.interests = interests
 
         # Check this on each update
         self.set_email()
@@ -505,9 +535,29 @@ def initUsers():
         db.create_all()
         """Tester data for table"""
         
-        u1 = User(name='Thomas Edison', uid=app.config['ADMIN_USER'], password=app.config['ADMIN_PASSWORD'], pfp='toby.png', car='toby_car.png', role="Admin")
-        u2 = User(name='Grace Hopper', uid=app.config['DEFAULT_USER'], password=app.config['DEFAULT_PASSWORD'], pfp='hop.png')
-        u3 = User(name='Nicholas Tesla', uid='niko', password='123niko', pfp='niko.png' )
+        u1 = User(
+            name='Thomas Edison',
+            uid=app.config['ADMIN_USER'],
+            password=app.config['ADMIN_PASSWORD'],
+            pfp='toby.png',
+            car='toby_car.png',
+            role="Admin",
+            interests="Inventing, Reading, Physics"
+        )
+        u2 = User(
+            name='Grace Hopper',
+            uid=app.config['DEFAULT_USER'],
+            password=app.config['DEFAULT_PASSWORD'],
+            pfp='hop.png',
+            interests="Programming, Mathematics, Leadership"
+        )
+        u3 = User(
+            name='Nicholas Tesla',
+            uid='niko',
+            password='123niko',
+            pfp='niko.png',
+            interests="Electrical Engineering, Innovation, Nature"
+        )
         users = [u1, u2, u3]
         
         for user in users:

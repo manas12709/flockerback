@@ -90,8 +90,13 @@ class UserAPI:
             if uid is None or len(uid) < 2:
                 return {'message': 'User ID is missing, or is less than 2 characters'}, 400
 
+            # Validate interests
+            interests = body.get('interests', '')
+            if not isinstance(interests, str):
+                return {'message': 'Interests must be a string'}, 400
+
             # Setup minimal USER OBJECT
-            user_obj = User(name=name, uid=uid)
+            user_obj = User(name=name, uid=uid, interests=interests)
 
             # Add user to database
             user = user_obj.create(body)  # pass the body elements to be saved in the database
