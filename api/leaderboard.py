@@ -14,6 +14,8 @@ class LeaderboardAPI:
         def get(self):
             posts = Post.query.all()
             post_vote_counts = []
+            user_engagement = {}
+            top_interests = {}
 
             for post in posts:
                 user = User.query.filter_by(id=post.user_id).first()
@@ -32,10 +34,28 @@ class LeaderboardAPI:
                     'net_vote_count': net_vote_count
                 })
 
+                # Track user engagement
+                if user.username not in user_engagement:
+                    user_engagement[user.username] = 0
+                user_engagement[user.username] += 1
+
+                # Track top interests
+                if post.title not in top_interests:
+                    top_interests[post.title] = 0
+                top_interests[post.title] += 1
+
             # Sort the posts by net vote count in descending order
             post_vote_counts.sort(key=lambda x: x['net_vote_count'], reverse=True)
 
-            return jsonify(post_vote_counts)
+            # Sort user engagement and top interests
+            sorted_user_engagement = sorted(user_engagement.items(), key=lambda x: x[1], reverse=True)
+            sorted_top_interests = sorted(top_interests.items(), key=lambda x: x[1], reverse=True)
+
+            return jsonify({
+                'posts': post_vote_counts,
+                'user_engagement': sorted_user_engagement,
+                'top_interests': sorted_top_interests
+            })
 
 api.add_resource(LeaderboardAPI._Leaderboard, '/leaderboard')
 app.register_blueprint(leaderboard_api)
