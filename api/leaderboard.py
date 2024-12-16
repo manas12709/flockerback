@@ -1,8 +1,10 @@
-from flask import Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify
 from flask_restful import Api, Resource
 from model.vote import Vote
 from model.post import Post
 from model.user import User
+
+app = Flask(__name__)
 
 leaderboard_api = Blueprint('leaderboard_api', __name__, url_prefix='/api')
 api = Api(leaderboard_api)
@@ -33,3 +35,7 @@ class LeaderboardAPI:
             return jsonify(post_vote_counts)
 
 api.add_resource(LeaderboardAPI._Leaderboard, '/leaderboard')
+app.register_blueprint(leaderboard_api)
+
+if __name__ == '__main__':
+    app.run(debug=True)
