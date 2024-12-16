@@ -17,25 +17,21 @@ from __init__ import app, db, login_manager  # Key Flask objects
 # API endpoints
 from api.user import user_api 
 from api.pfp import pfp_api
-from api.nestImg import nestImg_api # Justin added this, custom format for his website
 from api.post import post_api
 from api.channel import channel_api
 from api.group import group_api
 from api.section import section_api
-from api.nestPost import nestPost_api # Justin added this, custom format for his website
 from api.polls_api import polls_api # Adi added this, messages for his website
 
 from api.teaminfo import teaminfo_api
 
 from api.vote import vote_api
 # database Initialization functions
-from model.carChat import CarChat
 from model.user import User, initUsers
 from model.section import Section, initSections
 from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
-from model.nestPost import NestPost, initNestPosts # Justin added this, custom format for his website
 from model.vote import Vote, initVotes
 # server only Views
 
@@ -47,9 +43,6 @@ app.register_blueprint(post_api)
 app.register_blueprint(channel_api)
 app.register_blueprint(group_api)
 app.register_blueprint(section_api)
-# Added new files to create nestPosts, uses a different format than Mortensen and didn't want to touch his junk
-app.register_blueprint(nestPost_api)
-app.register_blueprint(nestImg_api)
 app.register_blueprint(vote_api)
 app.register_blueprint(teaminfo_api)
 # Tell Flask-Login the view function name of your login route
@@ -156,7 +149,6 @@ def generate_data():
     initGroups()
     initChannels()
     initPosts()
-    initNestPosts()
     initVotes()
     
 # Backup the old database
