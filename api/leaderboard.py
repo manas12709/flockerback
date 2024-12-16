@@ -1,5 +1,6 @@
-from flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify, request, g
 from flask_restful import Api, Resource
+from functools import wraps
 from model.vote import Vote
 from model.post import Post
 from model.user import User
@@ -9,8 +10,21 @@ app = Flask(__name__)
 leaderboard_api = Blueprint('leaderboard_api', __name__, url_prefix='/api')
 api = Api(leaderboard_api)
 
+# Dummy token for demonstration purposes
+VALID_TOKEN = "your_secure_token"
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token or token != VALID_TOKEN:
+            return jsonify({'message': 'Token is missing or invalid!'}), 403
+        return f(*args, **kwargs)
+    return decorated
+
 class LeaderboardAPI:
     class _Leaderboard(Resource):
+        @token_required
         def get(self):
             posts = Post.query.all()
             post_vote_counts = []
