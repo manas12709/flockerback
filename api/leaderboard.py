@@ -1,6 +1,5 @@
 from flask import Flask, Blueprint, jsonify, request
 from flask_restful import Api, Resource
-from flask_cors import CORS
 from functools import wraps
 from model.vote import Vote
 from model.post import Post
@@ -8,7 +7,6 @@ from model.user import User
 from collections import Counter
 
 app = Flask(__name__)
-CORS(app)  # Allow Cross-Origin Requests
 
 leaderboard_api = Blueprint('leaderboard_api', __name__, url_prefix='/api')
 api = Api(leaderboard_api)
@@ -45,8 +43,6 @@ class LeaderboardAPI:
                     "net_vote_count": net_votes
                 })
 
-            post_data.sort(key=lambda x: x['net_vote_count'], reverse=True)
-
             # Top Interests Example Logic
             interests = [post.category for post in posts]  # Assuming 'category' represents interest
             interest_counts = Counter(interests).most_common()
@@ -68,4 +64,4 @@ api.add_resource(LeaderboardAPI._Leaderboard, '/leaderboard')
 app.register_blueprint(leaderboard_api)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3333)
+    app.run(debug=True, port=4887)
