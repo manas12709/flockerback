@@ -535,36 +535,123 @@ def initUsers():
         db.create_all()
         """Tester data for table"""
         
-        u1 = User(
-            name='Thomas Edison',
-            uid=app.config['ADMIN_USER'],
-            password=app.config['ADMIN_PASSWORD'],
-            pfp='toby.png',
-            car='toby_car.png',
-            role="Admin",
-            interests="Inventing, Reading, Physics"
-        )
-        u2 = User(
-            name='Grace Hopper',
-            uid=app.config['DEFAULT_USER'],
-            password=app.config['DEFAULT_PASSWORD'],
-            pfp='hop.png',
-            interests="Programming, Mathematics, Leadership"
-        )
-        u3 = User(
-            name='Nicholas Tesla',
-            uid='niko',
-            password='123niko',
-            pfp='niko.png',
-            interests="Electrical Engineering, Innovation, Nature, Inventing"
-        )
-        u4 = User(
-            name='Bobby Bapat',
-            uid='bobby',
-            password='1111',
-            interests="Nature, Physics"
-        )
-        users = [u1, u2, u3, u4]
+        # Initial User List
+        users = [
+            User(
+                name='Thomas Edison',
+                uid=app.config['ADMIN_USER'],
+                password=app.config['ADMIN_PASSWORD'],
+                pfp='toby.png',
+                car='toby_car.png',
+                role="Admin",
+                interests="Inventing, Reading, Physics"
+            ),
+            User(
+                name='Grace Hopper',
+                uid=app.config['DEFAULT_USER'],
+                password=app.config['DEFAULT_PASSWORD'],
+                pfp='hop.png',
+                interests="Programming, Mathematics, Leadership"
+            ),
+            User(
+                name='Nicholas Tesla',
+                uid='niko',
+                password='123niko',
+                pfp='niko.png',
+                interests="Electrical Engineering, Innovation, Nature, Inventing"
+            ),
+            User(
+                name='Bobby Bapat',
+                uid='bobby',
+                password='1111',
+                interests="Nature, Physics"
+            ),
+            User(
+                name='Albert Einstein',
+                uid='einstein',
+                password='e=mc2',
+                interests="Physics, Mathematics, Nature"
+            ),
+            User(
+                name='Marie Curie',
+                uid='curie',
+                password='radium123',
+                interests="Chemistry, Physics, Research"
+            ),
+            User(
+                name='Alan Turing',
+                uid='turing',
+                password='enigma1942',
+                interests="Mathematics, Programming, Cryptography"
+            ),
+            User(
+                name='Ada Lovelace',
+                uid='ada',
+                password='lovelace99',
+                interests="Mathematics, Programming, Algorithms"
+            ),
+            User(
+                name='Galileo Galilei',
+                uid='galileo',
+                password='stars123',
+                interests="Astronomy, Physics, Invention"
+            ),
+            User(
+                name='Leonardo Da Vinci',
+                uid='davinci',
+                password='monaLisa',
+                interests="Art, Innovation, Anatomy, Nature"
+            ),
+            User(
+                name='Isaac Newton',
+                uid='newton',
+                password='applefall',
+                interests="Physics, Mathematics, Nature, Inventing"
+            ),
+            User(
+                name='Katherine Johnson',
+                uid='kjohnson',
+                password='apollo11',
+                interests="Mathematics, Programming, Aerospace"
+            ),
+            User(
+                name='Charles Darwin',
+                uid='darwin',
+                password='evolution123',
+                interests="Nature, Biology, Research, Writing"
+            ),
+            User(
+                name='Carl Sagan',
+                uid='sagan',
+                password='cosmos42',
+                interests="Astronomy, Physics, Writing"
+            ),
+            User(
+                name='Rosalind Franklin',
+                uid='rosalind',
+                password='dna1952',
+                interests="Chemistry, Biology, Research"
+            ),
+            User(
+                name='Alexander Graham Bell',
+                uid='bell',
+                password='phone1876',
+                interests="Invention, Communication, Physics"
+            ),
+            User(
+                name='John von Neumann',
+                uid='neumann',
+                password='gameTheory1',
+                interests="Mathematics, Programming, Cryptography, Algorithms"
+            ),
+            User(
+                name='Rachel Carson',
+                uid='carson',
+                password='silentSpring',
+                interests="Nature, Writing, Environmental Science"
+            )
+        ]
+
         
         for user in users:
             try:
