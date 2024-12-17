@@ -92,7 +92,7 @@ class User(db.Model, UserMixin):
         Gets the user's interests.
         
         Returns:
-            str: The user's interests.
+            str: The user's interests. Seperatred by commas.
         """
         return self._interests
 
