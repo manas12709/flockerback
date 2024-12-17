@@ -137,7 +137,6 @@ def initSections():
         s1 = Section(name='Home Page') 
         s2 = Section(name='Prism')
         sections = [s1, s2]
-        
         for section in sections:
             try:
                 section.create()
