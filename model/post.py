@@ -1,4 +1,3 @@
-# post.py
 import logging
 from sqlite3 import IntegrityError
 from sqlalchemy import Text, JSON
@@ -94,7 +93,7 @@ class Post(db.Model):
             "channel_name": channel.name if channel else None
         }
         return data
-    
+     
 
     def update(self):
         """
