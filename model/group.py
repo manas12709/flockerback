@@ -180,6 +180,7 @@ def initGroups():
         groups += [
             Group(name='Random Chatroom', section_id=prism_section.id, moderators=[User.query.get(1)]),
             Group(name='Daily Question', section_id=prism_section.id, moderators=[User.query.get(1)]),
+            Group(name='Interests', section_id=prism_section.id, moderators=[User.query.get(1)])
         ]
 
         for group in groups:
