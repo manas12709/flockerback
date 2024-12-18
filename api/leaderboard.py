@@ -7,9 +7,11 @@ from model.post import Post
 from model.user import User
 from model.time_spent import TimeSpent
 from sqlalchemy.exc import SQLAlchemyError
+from flask_cors import CORS
 
 # Initialize the Flask application.
 app = Flask(__name__)
+CORS(app)  
 
 # Create a Blueprint for the leaderboard API.
 leaderboard_api = Blueprint('leaderboard_api', __name__, url_prefix='/api')
