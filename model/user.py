@@ -60,11 +60,12 @@ class User(db.Model, UserMixin):
     _pfp = db.Column(db.String(255), unique=False, nullable=True)
     _car = db.Column(db.String(255), unique=False, nullable=True)
     _interests = db.Column(db.String(255), unique=False, nullable=True)  # New field added here
+    _followers = db.Column(db.String(255), unique=False, nullable=True)  # New field added here
 
     posts = db.relationship('Post', backref='author', lazy=True)
                                  
     
-    def __init__(self, name, uid, password="", role="User", pfp='', car='', email='?', interests=''):
+    def __init__(self, name, uid, password="", role="User", pfp='', car='', email='?', interests='', followers=''):
         """
         Constructor, 1st step in object creation.
         
@@ -75,6 +76,7 @@ class User(db.Model, UserMixin):
             role (str): The role of the user within the application. Defaults to "User".
             pfp (str): The path to the user's profile picture. Defaults to an empty string.
             interests (str): The user's interests. Defaults to an empty string.
+            followers (str): The user's followers. Defaults to an empty string.
         """
         self._name = name
         self._uid = uid
@@ -84,7 +86,7 @@ class User(db.Model, UserMixin):
         self._pfp = pfp
         self._car = car
         self._interests = interests
-
+        self._followers = followers
 
     @property
     def interests(self):
@@ -95,6 +97,16 @@ class User(db.Model, UserMixin):
             str: The user's interests. Seperatred by commas.
         """
         return self._interests
+
+    @property
+    def followers(self):
+        """
+        Gets the user's followers.
+        
+        Returns:
+            str: The user's followers. Seperatred by commas.
+        """
+        return self._followers
 
     @interests.setter
     def interests(self, interests):
@@ -108,6 +120,20 @@ class User(db.Model, UserMixin):
             self._interests = interests
         else:
             self._interests = ""
+
+    @followers.setter
+    def followers(self, followers):
+        """
+        Sets the user's followers.
+        
+        Args:
+            followers (str): The new followers for the user.
+        """
+        if isinstance(followers, str):
+            self._followers = followers
+        else:
+            self._followers = ""
+
 
     def get_id(self):
         """
@@ -364,7 +390,8 @@ class User(db.Model, UserMixin):
             "role": self._role,
             "pfp": self._pfp,
             "car": self._car,
-            "interests": self._interests  # Include interests in the dictionary
+            "interests": self._interests,  # Include interests in the dictionary
+            "followers": self._followers  # Include followers in the dictionary
         }
         return data
         
@@ -386,6 +413,7 @@ class User(db.Model, UserMixin):
         password = inputs.get("password", "")
         pfp = inputs.get("pfp", None)
         interests = inputs.get("interests", None)
+        followers = inputs.get("followers", None)
 
         # Update table with new data
         if name:
@@ -398,6 +426,8 @@ class User(db.Model, UserMixin):
             self.pfp = pfp
         if interests is not None:
             self.interests = interests
+        if followers is not None:
+            self.followers = followers
 
         # Check this on each update
         self.set_email()
@@ -544,14 +574,16 @@ def initUsers():
                 pfp='toby.png',
                 car='toby_car.png',
                 role="Admin",
-                interests="Inventing, Reading, Physics"
+                interests="Inventing, Reading, Physics",
+                followers="niko, bobby"
             ),
             User(
                 name='Grace Hopper',
                 uid=app.config['DEFAULT_USER'],
                 password=app.config['DEFAULT_PASSWORD'],
                 pfp='hop.png',
-                interests="Programming, Mathematics, Leadership"
+                interests="Programming, Mathematics, Leadership",
+                followers="niko"
             ),
             User(
                 name='Nicholas Tesla',
@@ -564,7 +596,8 @@ def initUsers():
                 name='Bobby Bapat',
                 uid='bobby',
                 password='1111',
-                interests="Nature, Physics"
+                interests="Nature, Physics",
+                followers="niko"
             ),
             User(
                 name='Albert Einstein',

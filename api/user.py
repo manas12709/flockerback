@@ -95,8 +95,12 @@ class UserAPI:
             if not isinstance(interests, str):
                 return {'message': 'Interests must be a string'}, 400
 
+            followers = body.get('followers', '')
+            if not isinstance(followers, str):
+                return {'message': 'Followers must be a string'}, 400
+
             # Setup minimal USER OBJECT
-            user_obj = User(name=name, uid=uid, interests=interests)
+            user_obj = User(name=name, uid=uid, interests=interests, followers=followers)
 
             # Add user to database
             user = user_obj.create(body)  # pass the body elements to be saved in the database
