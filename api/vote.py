@@ -104,6 +104,7 @@ class VoteAPI:
                 "post_id": post_id,
                 "upvote_count": len(upvotes),
                 "downvote_count": len(downvotes),
+                "total_votes": len(votes),
                 "upvotes": upvotes,
                 "downvotes": downvotes
             }
