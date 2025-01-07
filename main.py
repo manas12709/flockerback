@@ -21,8 +21,8 @@ from api.post import post_api
 from api.channel import channel_api
 from api.group import group_api
 from api.section import section_api
-from api.polls_api import polls_api # Adi added this, messages for his website
 
+from api.poll import poll_api
 from api.teaminfo import teaminfo_api
 
 from api.vote import vote_api
@@ -36,7 +36,6 @@ from model.vote import Vote, initVotes
 # server only Views
 
 # register URIs for api endpoints
-app.register_blueprint(polls_api) # Adi added this, messages for his website
 app.register_blueprint(user_api)
 app.register_blueprint(pfp_api) 
 app.register_blueprint(post_api)
@@ -45,6 +44,7 @@ app.register_blueprint(group_api)
 app.register_blueprint(section_api)
 app.register_blueprint(vote_api)
 app.register_blueprint(teaminfo_api)
+app.register_blueprint(poll_api)
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
 
