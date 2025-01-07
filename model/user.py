@@ -600,6 +600,13 @@ def initUsers():
                 followers="niko"
             ),
             User(
+                name='Random Chatroom',
+                uid=app.config['ADMIN_USER'],
+                password='password',
+                interests="Soccer, Physics",
+                followers="bobby"
+            ),
+            User(
                 name='Albert Einstein',
                 uid='einstein',
                 password='e=mc2',
