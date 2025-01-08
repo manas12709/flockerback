@@ -1,132 +1,68 @@
-from flask import Flask, Blueprint, jsonify, request
+from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
-from functools import wraps
 from sqlalchemy import func
-from model.vote import Vote
-from model.post import Post
 from model.user import User
-from model.time_spent import TimeSpent
-from sqlalchemy.exc import SQLAlchemyError
-from flask_cors import CORS
+from __init__ import db
 
-# Initialize the Flask application.
-app = Flask(__name__)
-CORS(app)  
-
-# Create a Blueprint for the leaderboard API.
+# Create blueprint for the leaderboard API
 leaderboard_api = Blueprint('leaderboard_api', __name__, url_prefix='/api')
 api = Api(leaderboard_api)
 
-# Define a token for simplicity (update for production).
-VALID_TOKEN = "your_secure_token"  # Replace with your secure token
-
-# Define a decorator to require token authentication.
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token or token != VALID_TOKEN:
-            return jsonify({'message': 'Unauthorized!'}), 403
-        return f(*args, **kwargs)
-    return decorated
-
-class LeaderboardAPI:
-    # Top Posts by Net Votes
-    class _TopPosts(Resource):
-        @token_required
-        def get(self):
-            try:
-                # Fetch vote data from the Vote model
-                posts_votes = Vote.query.with_entities(
-                    Vote._post_id, Vote._vote_type
-                ).all()
-
-                vote_counts = {}
-                for post_id, vote_type in posts_votes:
-                    if post_id not in vote_counts:
-                        vote_counts[post_id] = {'upvote': 0, 'downvote': 0}
-                    vote_counts[post_id][vote_type] += 1
-
-                sorted_posts = sorted(
-                    vote_counts.items(),
-                    key=lambda item: item[1]['upvote'] - item[1]['downvote'],
-                    reverse=True
-                )[:10]
-
-                response = []
-                for post_id, votes in sorted_posts:
-                    net_votes = votes['upvote'] - votes['downvote']
-                    post = Post.query.get(post_id)
-                    user = User.query.get(post.user_id)
-
-                    if post and user:
-                        response.append({
-                            "post_id": post_id,
-                            "post_title": post.title,
-                            "username": user.username,
-                            "net_vote_count": net_votes
-                        })
-
-                return jsonify({"top_posts": response})
-            except SQLAlchemyError as e:
-                return jsonify({'message': f'Error retrieving top posts: {str(e)}'}), 500
-
-    # Top Users by Time Spent
+class Leaderboard:
+    
     class _TopUsers(Resource):
-        @token_required
         def get(self):
             try:
-                # Query to get users with the most time spent on the platform
-                top_users = TimeSpent.query.with_entities(
-                    TimeSpent.user_id,
-                    func.sum(TimeSpent.time_spent).label('total_time')
-                ).group_by(TimeSpent.user_id).order_by(func.sum(TimeSpent.time_spent).desc()).limit(10).all()
-
-                response = []
-                for user_id, total_time in top_users:
-                    user = User.query.get(user_id)
-                    if user:
-                        response.append({
-                            "user_id": user_id,
-                            "username": user.username,
-                            "total_time_spent": total_time
+                # Get the current user (for simplicity, assuming user_id is passed as a query parameter)
+                current_user_id = request.args.get('self._uid')
+                current_user = User.query.get(self._name)
+                if not current_user:
+                    return {'message': 'User not found'}, 404
+                
+                current_user_interests = set(self._intrests.split(", "))
+                
+                # Get all users except the current user
+                all_users = User.query.filter(self.uid != _uid).all()
+                
+                matched_users = []
+                for user in all_users:
+                    user_interests = set(_intrests.split(", "))
+                    shared_interests = current_user_interests.intersection(user_interests)
+                    if shared_interests:
+                        matched_users.append({
+                            'username': _name,
+                            'shared_interests': list(shared_interests)
                         })
+                
+                # Sort matched users by the number of shared interests
+                matched_users.sort(key=lambda x: len(x['shared_interests']), reverse=True)
+                
+                return jsonify({'top_users': matched_users})
+            except Exception as e:
+                return {'message': f'Error retrieving top users: {str(e)}'}, 500
 
-                return jsonify({"top_users": response})
-            except SQLAlchemyError as e:
-                return jsonify({'message': f'Error retrieving top users: {str(e)}'}), 500
-
-    # Top Interests
     class _TopInterests(Resource):
-        @token_required
         def get(self):
             try:
-                # Query all users and count their interests
-                users = User.query.all()
+                # Get all users
+                all_users = User.query.all()
+                
                 interest_counts = {}
-
-                for user in users:
+                for user in all_users:
                     interests = user.interests.split(", ")
                     for interest in interests:
-                        interest_counts[interest] = interest_counts.get(interest, 0) + 1
-
-                sorted_interests = sorted(
-                    interest_counts.items(), key=lambda x: x[1], reverse=True
-                )[:10]
-
-                response = [{"interest": interest, "count": count} for interest, count in sorted_interests]
-
-                return jsonify({"top_interests": response})
-            except SQLAlchemyError as e:
-                return jsonify({'message': f'Error retrieving interests: {str(e)}'}), 500
+                        if interest in interest_counts:
+                            interest_counts[interest] += 1
+                        else:
+                            interest_counts[interest] = 1
+                
+                # Sort interests by count
+                sorted_interests = sorted(interest_counts.items(), key=lambda x: x[1], reverse=True)
+                
+                return jsonify({'top_interests': [{'interest': interest, 'count': count} for interest, count in sorted_interests]})
+            except Exception as e:
+                return {'message': f'Error retrieving top interests: {str(e)}'}, 500
 
 # Add resources to the API
-api.add_resource(LeaderboardAPI._TopPosts, '/leaderboard/top_posts')
-api.add_resource(LeaderboardAPI._TopUsers, '/leaderboard/top_users')
-api.add_resource(LeaderboardAPI._TopInterests, '/leaderboard/top_interests')
-
-# Register the blueprint
-app.register_blueprint(leaderboard_api)
-
-if __name__ == '__main__':
-    app.run(debug=True, port=4887)
+api.add_resource(Leaderboard._TopUsers, '/leaderboard/top_users')
+api.add_resource(Leaderboard._TopInterests, '/leaderboard/top_interests')
