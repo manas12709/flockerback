@@ -81,8 +81,8 @@ def initVotes():
 
         # Optionally, add some test data (replace with actual values as needed)
         votes = [
-            Vote(vote_type='upvote', user_id=1, post_id=1),
-            Vote(vote_type='downvote', user_id=2, post_id=1),
+            Vote(vote_type='upvote', user_id=1, post_id=5),
+            Vote(vote_type='downvote', user_id=2, post_id=5),
         ]
         
         for vote in votes:

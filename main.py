@@ -25,6 +25,8 @@ from api.section import section_api
 from api.poll import poll_api
 from api.teaminfo import teaminfo_api
 
+from api.leaderboard import leaderboard_api
+
 from api.vote import vote_api
 # database Initialization functions
 from model.user import User, initUsers
@@ -45,6 +47,7 @@ app.register_blueprint(section_api)
 app.register_blueprint(vote_api)
 app.register_blueprint(teaminfo_api)
 app.register_blueprint(poll_api)
+app.register_blueprint(leaderboard_api)
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
 
