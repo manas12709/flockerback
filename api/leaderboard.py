@@ -13,7 +13,7 @@ class Leaderboard:
     class _TopUsers(Resource):
         def get(self):
             try:
-                # Get the current user (for simplicity, assuming user_id is passed as a query parameter)
+                # Get the current user
                 current_user_id = request.args.get('self._uid')
                 current_user = User.query.get(self._name)
                 if not current_user:
@@ -34,7 +34,7 @@ class Leaderboard:
                             'shared_interests': list(shared_interests)
                         })
                 
-                # Sort matched users by the number of shared interests
+                # Sort matched users by the number of shared interests (descending)
                 matched_users.sort(key=lambda x: len(x['shared_interests']), reverse=True)
                 
                 return jsonify({'top_users': matched_users})
