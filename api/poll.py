@@ -36,13 +36,13 @@ class Poll:
         
     api.add_resource(_Read, '/poll_read')
     
-    class _Write(User, Resource):
-        def post(self):
-            try:
-                connection = sqlite3.connect(db_path)
-                cursor = connection.cursor()
+    # class _Write(User, Resource): #register to main.py
+    #     def post(self):
+    #         try:
+    #             connection = sqlite3.connect(db_path)
+    #             cursor = connection.cursor()
                 
-                # insert code to add to db here:
+    #             # insert code to add to db here:
                 
-            except Exception as e:
-                print(f"Poll Error: {e}")
+    #         except Exception as e:
+    #             print(f"Poll Error: {e}")
