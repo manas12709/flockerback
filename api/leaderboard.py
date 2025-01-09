@@ -51,6 +51,9 @@ class Leaderboard:
                 # reverse=True means that the list will be sorted in descending order
                 matched_users.sort(key=lambda x: len(x['shared_interests']), reverse=True)
                 
+                # Uncomment the line below to add a breakpoint for Postman API testing
+                # import pdb; pdb.set_trace()
+                
                 # Return the matched users as a JSON response
                 return jsonify({'top_users': matched_users})
             except Exception as e:
@@ -81,6 +84,9 @@ class Leaderboard:
                 # The key=lambda x: x[1] part specifies that the sorting key is the count of each interest
                 # reverse=True means that the list will be sorted in descending order
                 sorted_interests = sorted(interest_counts.items(), key=lambda x: x[1], reverse=True)
+                
+                # Breakpoint for Postman API testing
+                # breakpoint()
                 
                 # Return the top interests as a JSON response
                 return jsonify({'top_interests': [{'interest': interest, 'count': count} for interest, count in sorted_interests]})
