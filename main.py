@@ -35,6 +35,7 @@ from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
 from model.vote import Vote, initVotes
+from model.topusers import TopUser
 # server only Views
 
 # register URIs for api endpoints
