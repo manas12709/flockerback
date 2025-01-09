@@ -250,9 +250,22 @@ class UserAPI:
             current_user = g.current_user
             ''' Return the current user as a json object '''
             return jsonify(current_user.read())
+        
+    class _Interests(Resource):
+        @token_required()
+        def get(self):
+            """
+            Return the interests of the authenticated user as a JSON object.
+            """
+            current_user = g.current_user
+            interests = current_user.interests
+            if not interests:
+                return {'message': 'No interests found for this user'}, 404
+            return jsonify(interests)
 
 # Register the API resources with the Blueprint
 api.add_resource(UserAPI._ID, '/id')
 api.add_resource(UserAPI._BULK_CRUD, '/users')
 api.add_resource(UserAPI._CRUD, '/user')
 api.add_resource(UserAPI._Security, '/authenticate')
+api.add_resource(UserAPI._Interests, '/interests')
