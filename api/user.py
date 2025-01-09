@@ -263,9 +263,22 @@ class UserAPI:
                 return {'message': 'No interests found for this user'}, 404
             return jsonify(interests)
 
+    class _Followers(Resource):
+        @token_required()
+        def get(self):
+            """
+            Return the followers of the authenticated user as a JSON object.
+            """
+            current_user = g.current_user
+            followers = current_user.followers
+            if not followers:
+                return {'message': 'No followers found for this user'}, 404
+            return jsonify(followers)
+
 # Register the API resources with the Blueprint
 api.add_resource(UserAPI._ID, '/id')
 api.add_resource(UserAPI._BULK_CRUD, '/users')
 api.add_resource(UserAPI._CRUD, '/user')
 api.add_resource(UserAPI._Security, '/authenticate')
 api.add_resource(UserAPI._Interests, '/interests')
+api.add_resource(UserAPI._Followers, '/followers')
