@@ -28,6 +28,7 @@ from api.teaminfo import teaminfo_api
 from api.leaderboard import leaderboard_api
 
 from api.vote import vote_api
+from api.teaminfo import teaminfo_api
 # database Initialization functions
 from model.user import User, initUsers
 from model.section import Section, initSections
@@ -35,6 +36,7 @@ from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
 from model.vote import Vote, initVotes
+from model.teaminfo import TeamMember, initTeamMembers
 from model.topusers import TopUser
 # server only Views
 
@@ -154,6 +156,7 @@ def generate_data():
     initChannels()
     initPosts()
     initVotes()
+    initTeamMembers()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
