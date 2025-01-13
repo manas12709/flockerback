@@ -13,6 +13,7 @@ api = Api(poll_api)
 
 db_path = 'instance/volumes/user_management.db'
 CORS(poll_api)
+
 # Create a class for the poll API
 class Poll:
     class _Read(Resource):
@@ -21,28 +22,49 @@ class Poll:
                 # Retrieve the poll data
                 connection = sqlite3.connect(db_path)
                 cursor = connection.cursor()
-                query = 'SELECT _name, _interests FROM users;'  # Query to get the interests and names of users
+                query = 'SELECT _name, _interests FROM polls;'  # Query to get the interests and names of users
                 cursor.execute(query)
                 results = cursor.fetchall()
                 connection.close()
 
                 # Convert the results to JSON
-                response_data = [{"name": row[0], "interests": row[1]} for row in results]
+                response_data = []
+                for row in results:
+                    user_data = {
+                        "name": row[0],
+                        "interests": row[1]
+                    }
+                    response_data.append(user_data)
 
                 return response_data, 200
             except Exception as e:
                 print(f"Poll Error: {e}")
                 return {'message': 'Error retrieving poll data'}, 400
-        
+            
+    class _Create(Resource):
+        def post(self):
+            try:
+                data = request.get_json()
+                name = data['name']
+                interests = data['interests']
+
+                connection = sqlite3.connect(db_path)
+                cursor = connection.cursor()
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS polls (
+                        _pid INTEGER PRIMARY KEY AUTOINCREMENT,
+                        _name TEXT,
+                        _interests TEXT
+                    );
+                """)
+                cursor.execute("INSERT INTO polls (_name, _interests) VALUES (?, ?)", (name, interests))
+                connection.commit()
+                connection.close()
+
+                return {'message': 'Poll data inserted successfully'}, 201
+            except Exception as e:
+                print("Poll Error: ", e)
+                return {'message': 'Error inserting poll data'}, 400
+
     api.add_resource(_Read, '/poll_read')
-    
-    # class _Write(User, Resource): #register to main.py
-    #     def post(self):
-    #         try:
-    #             connection = sqlite3.connect(db_path)
-    #             cursor = connection.cursor()
-                
-    #             # insert code to add to db here:
-                
-    #         except Exception as e:
-    #             print(f"Poll Error: {e}")
+    api.add_resource(_Create, '/poll_add')
