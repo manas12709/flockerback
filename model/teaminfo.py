@@ -49,6 +49,23 @@ class TeamMember(db.Model):
             "owns_cars": self.owns_cars.split(', ') if self.owns_cars else []
         }
 
+    def update(self, data):
+        """
+        Update the team member's data with the provided dictionary.
+        """
+        try:
+            self.first_name = data.get('first_name', self.first_name)
+            self.last_name = data.get('last_name', self.last_name)
+            self.dob = data.get('dob', self.dob)
+            self.residence = data.get('residence', self.residence)
+            self.email = data.get('email', self.email)
+            owns_cars = data.get('owns_cars', [])
+            self.owns_cars = ', '.join(owns_cars) if isinstance(owns_cars, list) else owns_cars
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+        
     def delete(self):
         """
         Remove the team member from the database and commit the transaction.
