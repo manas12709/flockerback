@@ -21,9 +21,10 @@ from api.post import post_api
 from api.channel import channel_api
 from api.group import group_api
 from api.section import section_api
-
+from api.player import player_api
 from api.poll import poll_api
 from api.teaminfo import teaminfo_api
+from api.school_classes import school_class_api
 
 from api.leaderboard import leaderboard_api
 
@@ -36,7 +37,10 @@ from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
 from model.vote import Vote, initVotes
+from model.player import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
+from model.school_classes import SchoolClass, initSchoolClasses
+
 from model.topusers import TopUser
 # server only Views
 
@@ -48,9 +52,12 @@ app.register_blueprint(channel_api)
 app.register_blueprint(group_api)
 app.register_blueprint(section_api)
 app.register_blueprint(vote_api)
+app.register_blueprint(school_class_api)
 app.register_blueprint(teaminfo_api)
 app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
+app.register_blueprint(player_api)
+
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
 
@@ -157,6 +164,8 @@ def generate_data():
     initPosts()
     initVotes()
     initTeamMembers()
+    initSchoolClasses()
+    initPlayers()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
@@ -177,7 +186,8 @@ def extract_data():
         data['sections'] = [section.read() for section in Section.query.all()]
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
-        data['posts'] = [post.read() for post in Post.query.all()]
+        # data['posts'] = [post.read() for post in Post.query.all()]
+        data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -192,7 +202,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'posts']:
+    for table in ['users', 'sections', 'groups', 'channels', 'school_classes']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -204,7 +214,10 @@ def restore_data(data):
         _ = Section.restore(data['sections'])
         _ = Group.restore(data['groups'], users)
         _ = Channel.restore(data['channels'])
-        _ = Post.restore(data['posts'])
+       # _ = Post.restore(data['posts'])
+        _ = SchoolClass.restore(data['school_classes'])
+        # _ = Post.restore(data['posts'])
+        _ = Vote.restore(data['votes'])
     print("Data restored to the new database.")
 
 # Define a command to backup data
