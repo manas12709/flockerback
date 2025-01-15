@@ -21,7 +21,7 @@ from api.post import post_api
 from api.channel import channel_api
 from api.group import group_api
 from api.section import section_api
-
+from api.player import player_api
 from api.poll import poll_api
 from api.teaminfo import teaminfo_api
 from api.school_classes import school_class_api
@@ -37,7 +37,7 @@ from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
 from model.vote import Vote, initVotes
-from model.sports import Player, initPlayers
+from model.player import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
 from model.school_classes import SchoolClass, initSchoolClasses
 
@@ -56,6 +56,8 @@ app.register_blueprint(school_class_api)
 app.register_blueprint(teaminfo_api)
 app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
+app.register_blueprint(player_api)
+
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
 

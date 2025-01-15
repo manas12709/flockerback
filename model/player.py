@@ -84,3 +84,43 @@ def initPlayers():
         except Exception as e:
             db.session.rollback()
             print(f"Error adding {player.first_name} {player.last_name}: {e}")
+            
+@staticmethod
+            
+def restore(data):
+    """
+    Restore players from a list of dictionaries.
+    """
+    restored_players = {}
+    for player_data in data:
+        try:
+            _ = player_data.pop('id', None)  # Remove 'id' from player_data
+            first_name = player_data.get("first_name")
+            last_name = player_data.get("last_name")
+            team = player_data.get("team")
+
+            if not first_name or not last_name or not team:
+                raise ValueError("Missing required fields: first_name, last_name, or team.")
+
+            # Generate a unique key using the player's full name
+            player_key = f"{first_name} {last_name}"
+
+            # Check if a player with the same name and team exists
+            player = Player.query.filter_by(first_name=first_name, last_name=last_name, team=team).first()
+
+            if player:
+                # Update the existing player's data
+                player.update(player_data)
+            else:
+                # Create a new player if not found
+                player = Player(**player_data)
+                player.create()
+
+            # Add the player to the restored_players dictionary
+            restored_players[player_key] = player
+
+        except Exception as e:
+            print(f"Error processing player data: {player_data} - {e}")
+            continue
+
+    return restored_players
