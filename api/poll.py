@@ -22,8 +22,17 @@ class Poll:
                 # Retrieve the poll data
                 connection = sqlite3.connect(db_path)
                 cursor = connection.cursor()
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS polls (
+                        _pid INTEGER PRIMARY KEY AUTOINCREMENT,
+                        _name TEXT,
+                        _interests TEXT
+                    );
+                """)
                 query = 'SELECT _name, _interests FROM polls;'  # Query to get the interests and names of users
                 cursor.execute(query)
+                
+
                 results = cursor.fetchall()
                 connection.close()
 
