@@ -61,6 +61,30 @@ class SchoolClass(db.Model):
             db.session.rollback()
             raise e
 
+    @staticmethod
+    def restore(data):
+        """
+        Restore school classes from a list of dictionaries.
+
+        Args:
+            data (list): A list of dictionaries containing school class data.
+
+        Returns:
+            dict: A dictionary of restored school classes keyed by subject.
+        """
+        restored_classes = {}
+        for class_data in data:
+            _ = class_data.pop('id', None)  # Remove 'id' from class_data
+            subject = class_data.get("subject", None)
+            school_class = SchoolClass.query.filter_by(subject=subject).first()
+            if school_class:
+                school_class.update(class_data)
+            else:
+                school_class = SchoolClass(**class_data)
+                school_class.create()
+            restored_classes[subject] = school_class
+        return restored_classes
+
 def initSchoolClasses():
     """
     Initialize the SchoolClass table with default data.
