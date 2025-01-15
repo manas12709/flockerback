@@ -24,6 +24,7 @@ from api.section import section_api
 
 from api.poll import poll_api
 from api.teaminfo import teaminfo_api
+from api.school_classes import school_class_api
 
 from api.leaderboard import leaderboard_api
 
@@ -50,6 +51,7 @@ app.register_blueprint(channel_api)
 app.register_blueprint(group_api)
 app.register_blueprint(section_api)
 app.register_blueprint(vote_api)
+app.register_blueprint(school_class_api)
 app.register_blueprint(teaminfo_api)
 app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
