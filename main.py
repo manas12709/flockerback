@@ -214,6 +214,8 @@ def restore_data(data):
         _ = Channel.restore(data['channels'])
        # _ = Post.restore(data['posts'])
         _ = SchoolClass.restore(data['school_classes'])
+        _ = Post.restore(data['posts'])
+        _ = Vote.restore(data['votes'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

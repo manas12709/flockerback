@@ -59,6 +59,20 @@ class Vote(db.Model):
             "user_id": self._user_id,
             "post_id": self._post_id
         }
+    
+    def update(self, vote_type):
+        """
+        Update the vote type and commit the transaction.
+
+        Args:
+            vote_type (str): Type of the vote, either "upvote" or "downvote".
+        """
+        try:
+            self._vote_type = vote_type
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise
 
     def delete(self):
         """
