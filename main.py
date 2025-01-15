@@ -36,6 +36,7 @@ from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
 from model.vote import Vote, initVotes
+from model.sports import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
 from model.school_classes import SchoolClass, initSchoolClasses
 
@@ -160,6 +161,7 @@ def generate_data():
     initVotes()
     initTeamMembers()
     initSchoolClasses()
+    initPlayers()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
