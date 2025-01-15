@@ -212,6 +212,7 @@ def restore_data(data):
         _ = Group.restore(data['groups'], users)
         _ = Channel.restore(data['channels'])
         _ = Post.restore(data['posts'])
+        _ = Vote.restore(data['votes'])
     print("Data restored to the new database.")
 
 # Define a command to backup data
