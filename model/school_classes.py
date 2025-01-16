@@ -11,10 +11,12 @@ class SchoolClass(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     subject = db.Column(db.String(100), nullable=False)
     teacher = db.Column(db.String(500), nullable=True)  # Comma-separated list of teachers
+    building = db.Column(db.String(100), nullable=True)  # Building where the class is located
 
-    def __init__(self, subject, teacher):
+    def __init__(self, subject, teacher, building=None):
         self.subject = subject
         self.teacher = ', '.join(teacher) if isinstance(teacher, list) else teacher
+        self.building = building
 
     def create(self):
         """
@@ -34,7 +36,8 @@ class SchoolClass(db.Model):
         return {
             "id": self.id,
             "subject": self.subject,
-            "teacher": self.teacher.split(', ') if self.teacher else []
+            "teacher": self.teacher.split(', ') if self.teacher else [],
+            "building": self.building
         }
 
     def update(self, data):
@@ -45,6 +48,7 @@ class SchoolClass(db.Model):
             self.subject = data.get('subject', self.subject)
             teacher = data.get('teacher', self.teacher)
             self.teacher = ', '.join(teacher) if isinstance(teacher, list) else teacher
+            self.building = data.get('building', self.building)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -90,18 +94,18 @@ def initSchoolClasses():
     Initialize the SchoolClass table with default data.
     """
     classes = [
-        SchoolClass("Mathematics", ["Nydam", "Buehler", "Froom", "Larsen", "Hightower"]),
-        SchoolClass("English", ["Hall", "Darcey", "Weeg"]),
-        SchoolClass("Chemistry", ["Ozuna", "Callicott", "Millman"]),
-        SchoolClass("Engineering", ["Mortensen", "Brown", "Campillo"]),
-        SchoolClass("Physics", ["Liao", "Millman", "Eckman"])
+        SchoolClass("Mathematics", ["Nydam", "Buehler", "Froom", "Larsen", "Hightower"], building="Science Block"),
+        SchoolClass("English", ["Hall", "Darcey", "Weeg"], building="Arts Wing"),
+        SchoolClass("Chemistry", ["Ozuna", "Callicott", "Millman"], building="Laboratory Building"),
+        SchoolClass("Engineering", ["Mortensen", "Brown", "Campillo"], building="Tech Center"),
+        SchoolClass("Physics", ["Liao", "Millman", "Eckman"], building="Physics Block")
     ]
 
     for school_class in classes:
         try:
             db.session.add(school_class)
             db.session.commit()
-            print(f"Added School Class: {school_class.subject} taught by {school_class.teacher}")
+            print(f"Added School Class: {school_class.subject} taught by {school_class.teacher} in {school_class.building}")
         except Exception as e:
             db.session.rollback()
             print(f"Error adding class {school_class.subject}: {e}")

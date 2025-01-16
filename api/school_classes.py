@@ -28,7 +28,8 @@ class SchoolClassAPI:
             # Create a new SchoolClass object
             school_class = SchoolClass(
                 subject=data['subject'],
-                teacher=data['teacher'] if isinstance(data['teacher'], list) else [data['teacher']]
+                teacher=data['teacher'] if isinstance(data['teacher'], list) else [data['teacher']],
+                building=data.get('building')
             )
 
             # Save the school class using the ORM method
