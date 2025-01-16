@@ -193,7 +193,7 @@ def extract_data():
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         # data['posts'] = [post.read() for post in Post.query.all()]
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
-        data['CodingLanguage'] = [CodingLanguage.read() for CodingLanguage in CodingLanguage.query.all()]
+        data['languages'] = [Language.read() for Language in Language.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
     return data
