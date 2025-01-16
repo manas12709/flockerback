@@ -84,6 +84,26 @@ class Vote(db.Model):
         except Exception as e:
             db.session.rollback()
             raise e
+        
+    @staticmethod
+    def restore(data):
+        """
+        Restore votes from a list of dictionaries.
+
+        Args:
+            data (list): List of dictionaries containing vote data.
+        
+        Returns:
+            list: List of restored Vote objects.
+        """
+        restored_classes = {}
+        for vote_data in data:
+            vote = Vote(vote_data['vote_type'], vote_data['user_id'], vote_data['post_id'])
+            vote.create()
+            restored_classes[vote_data['id']] = vote
+            
+        return restored_classes
+
 
 def initVotes():
     """
