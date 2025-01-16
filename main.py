@@ -25,8 +25,9 @@ from api.player import player_api
 from api.poll import poll_api
 from api.teaminfo import team_member_api
 from api.school_classes import school_class_api
-
 from api.leaderboard import leaderboard_api
+from api.language import language_api
+# from api.radiant import radiant_api
 
 from api.vote import vote_api
 from api.teaminfo import team_member_api
@@ -40,8 +41,8 @@ from model.vote import Vote, initVotes
 from model.player import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
 from model.school_classes import SchoolClass, initSchoolClasses
-
-from model.topusers import TopUser
+from model.topusers import TopUser, initTopUsers
+from model.language import Language, initLanguages
 # server only Views
 
 # register URIs for api endpoints
@@ -57,6 +58,8 @@ app.register_blueprint(team_member_api)
 app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
 app.register_blueprint(player_api)
+app.register_blueprint(language_api)
+# app.register_blueprint(radiant_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
@@ -166,6 +169,8 @@ def generate_data():
     initTeamMembers()
     initSchoolClasses()
     initPlayers()
+    initTopUsers()
+    initLanguages()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
@@ -188,6 +193,7 @@ def extract_data():
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         # data['posts'] = [post.read() for post in Post.query.all()]
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
+        data['CodingLanguage'] = [CodingLanguage.read() for CodingLanguage in CodingLanguage.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
     return data
@@ -204,7 +210,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members']:
+    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members, CodingLanguage']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -221,6 +227,7 @@ def restore_data(data):
         # _ = Post.restore(data['posts'])
         _ = Vote.restore(data['votes'])
         _ = TeamMember.restore(data['team_members'])
+        _ = CodingLanguage.restore(data['CodingLanguage'])  
     print("Data restored to the new database.")
 
 # Define a command to backup data
@@ -238,8 +245,3 @@ def restore_data_command():
     
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
-        
-# this runs the flask application on the development server
-if __name__ == "__main__":
-    # change name for testing
-    app.run(debug=True, host="0.0.0.0", port="8887")
