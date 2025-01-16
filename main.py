@@ -188,6 +188,7 @@ def extract_data():
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         # data['posts'] = [post.read() for post in Post.query.all()]
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
+        data['votes'] = [vote.read() for vote in Vote.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -202,7 +203,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'school_classes']:
+    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
