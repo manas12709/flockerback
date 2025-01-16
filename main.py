@@ -209,7 +209,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members, Languages']:
+    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -243,6 +243,11 @@ def restore_data_command():
     
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
+        
+# this runs the flask application on the development server
+if __name__ == "__main__":
+    # change name for testing
+    app.run(debug=True, host="0.0.0.0", port="8887")
         
 # this runs the flask application on the development server
 if __name__ == "__main__":
