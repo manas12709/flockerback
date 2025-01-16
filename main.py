@@ -23,13 +23,13 @@ from api.group import group_api
 from api.section import section_api
 from api.player import player_api
 from api.poll import poll_api
-from api.teaminfo import teaminfo_api
+from api.teaminfo import team_member_api
 from api.school_classes import school_class_api
 
 from api.leaderboard import leaderboard_api
 
 from api.vote import vote_api
-from api.teaminfo import teaminfo_api
+from api.teaminfo import team_member_api
 # database Initialization functions
 from model.user import User, initUsers
 from model.section import Section, initSections
@@ -53,7 +53,7 @@ app.register_blueprint(group_api)
 app.register_blueprint(section_api)
 app.register_blueprint(vote_api)
 app.register_blueprint(school_class_api)
-app.register_blueprint(teaminfo_api)
+app.register_blueprint(team_member_api)
 app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
 app.register_blueprint(player_api)
@@ -189,6 +189,7 @@ def extract_data():
         # data['posts'] = [post.read() for post in Post.query.all()]
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
+        data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -203,7 +204,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes']:
+    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -219,6 +220,7 @@ def restore_data(data):
         _ = SchoolClass.restore(data['school_classes'])
         # _ = Post.restore(data['posts'])
         _ = Vote.restore(data['votes'])
+        _ = TeamMember.restore(data['team_members'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

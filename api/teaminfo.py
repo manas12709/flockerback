@@ -1,111 +1,121 @@
-from flask import Blueprint, jsonify
-from flask_restful import Api, Resource # used for REST API building
+from flask import Blueprint, request, jsonify
+from flask_restful import Api, Resource
+from __init__ import db
+from model.teaminfo import TeamMember
 
-teaminfo_api = Blueprint('teaminfo_api', __name__,
-                   url_prefix='/api')
+# Define the Blueprint for the TeamMember API
+team_member_api = Blueprint('TeamMember_api', __name__, url_prefix='/api')
 
-# API docs https://flask-restful.readthedocs.io/en/latest/
-api = Api(teaminfo_api)
+# Connect the Api object to the Blueprint
+api = Api(team_member_api)
 
-class StudentAPI:        
-    @staticmethod
-    def get_member(name):
-        members = {
-            "Yash": {
-                "FirstName": "Yash",
-                "LastName": "Parikh",
-                "DOB": "July 31",
-                "Residence": "Antartica",
-                "Email": "yashp51875@stu.powayusd.com",
-                "Owns_Cars": ["2024-McLaren-W1-HotWheels"]
-            },
-            "Manas": {
-                "FirstName": "Manas",
-                "LastName": "Goel",
-                "DOB": "July 12",
-                "Residence": "San Diego",
-                "Email": "manasg67038@stu.powayusd.com",
-                "Owns_Cars": ["2024-Tesla, 2024-Mercedes"]
-            },
-            "Mihir": {
-                "FirstName": "Mihir",
-                "LastName": "Bapat",
-                "DOB": "May 26",
-                "Residence": "Shrewsbury, UK",
-                "Email": "mih@rb59967stu.powayusd.com",
-                "Owns_Cars": ["2022 Tesla Model Y"]
-            },
-            "Adi":  {
-                "FirstName": "Adi",
-                "LastName": "Katre",
-                "DOB": "January 19",
-                "Residence": "La La Land",
-                "Email": "adityak21664@stu.powayusd.com",
-                "Owns_Cars": ["2022 Tesla Model Y", "2018 BMW 328i"]
-            },
-            "Anvay": {
-                "FirstName": "Anvay",
-                "LastName": "Vahia",
-                "DOB": "January 29",
-                "Residence": "North Pole",
-                "Email": "anvayv22800@stu.powayusd.com",
-                "Owns_Cars": ["2023 Tesla Model Y", "2022 Hyundai Palisade"]
-                },
-            "Pranav": {
-                "FirstName": "Pranav",
-                "LastName": "Santhosh",
-                "DOB": "May 12",
-                "Residence": "California",
-                "Email": "pranavs22638@stu.powayusd.com",
-                "Owns_Cars": ["2023 Rivian SUV", "2024 Toyota Prius"]
-            }
-        }
-        return members.get(name)
+class TeamMemberAPI:
+    """
+    Define the API CRUD endpoints for the TeamMember model.
+    """
 
-    class _Yash(Resource): 
-        def get(self):
-            yash_details = StudentAPI.get_member("Yash")
-            return jsonify(yash_details)
-    class _Adi(Resource): 
-        def get(self):
-           adi_details = StudentAPI.get_member("Adi")
-           return jsonify(adi_details)
-    class _Manas(Resource): 
-        def get(self):
-            manas_details = StudentAPI.get_member("Manas")
-            return jsonify(manas_details)
-    class _Anvay(Resource): 
-        def get(self):
-            anvay_details = StudentAPI.get_member("Anvay")
-            return jsonify(anvay_details)
-    class _Mihir(Resource): 
-        def get(self):
-            mihir_details = StudentAPI.get_member("Mihir")
-            return jsonify(mihir_details)
-    class _Pranav(Resource): 
-        def get(self):
-            pranav_details = StudentAPI.get_member("Pranav")
-            return jsonify(pranav_details)
-    class _Bulk(Resource):
-        def get(self):
-            # Use the helper method to get the team member's details
-            mihir_details = StudentAPI.get_member("Mihir")
-            manas_details = StudentAPI.get_member("Manas")              
-            adi_details = StudentAPI.get_member("Adi")
-            yash_details = StudentAPI.get_member("Yash")
-            anvay_details = StudentAPI.get_member("Anvay")
-            pranav_details = StudentAPI.get_member("Pranav")
-            return jsonify({"students": [mihir_details, manas_details, adi_details, yash_details, anvay_details,pranav_details]})
+    class _CRUD(Resource):
+        def post(self):
+            """
+            Create a new team member.
+            """
+            data = request.get_json()
 
+            # Validate required fields
+            if not data or 'first_name' not in data or 'last_name' not in data or 'dob' not in data or 'residence' not in data or 'email' not in data or 'owns_cars' not in data:
+                return {'message': 'First name, last name, date of birth, residence, email, and car ownership are required'}, 400
 
-    # building RESTapi endpoint
-    api.add_resource(_Yash, '/member/yash')          
-    api.add_resource(_Adi, '/member/adi')
-    api.add_resource(_Manas, '/member/manas')
-    api.add_resource(_Mihir, '/member/mihir')
-    api.add_resource(_Anvay, '/member/anvay')
-    api.add_resource(_Pranav, '/member/pranav')
-    api.add_resource(_Bulk, '/members')
+            # Create a new teammember object
+            team_member = TeamMember(
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                dob=data['dob'],
+                residence=data['residence'],
+                email=data['email'],
+                owns_cars=data['owns_cars'] if isinstance(data['owns_cars'], list) else [data['owns_cars']]
+            )
 
-    
-    
+            # Save the team member using the ORM method
+            try:
+                team_member.create()
+                return jsonify(team_member.read())
+            except Exception as e:
+                return {'message': f'Error creating team member: {e}'}, 500
+
+        def get(self):
+            """
+            Retrieve all team members by ID.
+            """
+            member_id = request.args.get('id')
+
+            if member_id:
+                # Get a specific team member by ID
+                team_member = TeamMember.query.get(member_id)
+                if not team_member:
+                    return {'message': 'Team member not found'}, 404
+                return jsonify(team_member.read())
+            
+            # Get all team members
+            members = TeamMember.query.all()
+            return jsonify([team_member.read() for team_member in members])
+        
+
+        def put(self):
+            """
+            Update an existing team member by ID.
+            """
+            data = request.get_json()
+
+            if not data or 'id' not in data:
+                return {'message': 'ID is required for updating a team member'}, 400
+
+            # Find the team member by ID
+            team_member = TeamMember.query.get(data['id'])
+            if not team_member:
+                return {'message': 'Team member not found'}, 404
+
+            # Update the team member
+            try:
+                team_member.update(data)
+                return jsonify(team_member.read())
+            except Exception as e:
+                return {'message': f'Error updating team member: {e}'}, 500
+
+        def delete(self):
+            """
+            Delete a team member by ID.
+            """
+            data = request.get_json()
+
+            if not data or 'id' not in data:
+                return {'message': 'ID is required for deleting a member'}, 400
+
+            # Find the team member by ID
+            team_member = TeamMember.query.get(data['id'])
+            if not team_member:
+                return {'message': 'Team member not found'}, 404
+
+            # Delete the team member
+            try:
+                team_member.delete()
+                return {'message': 'Team Member deleted successfully'}, 200
+            except Exception as e:
+                return {'message': f'Error deleting team member: {e}'}, 500
+
+    class _BY_CAR(Resource):
+        def get(self):
+            """
+            Retrieve all team members who own a specific car.
+            """
+            car = request.args.get('car')
+
+            if not car:
+                return {'message': 'Car is required'}, 400
+
+            # Get all team members who own the car
+            members = TeamMember.query.filter(TeamMember.owns_cars.contains(car)).all()
+            return jsonify([team_member.read() for team_member in members])
+
+    # Map the resources to API endpoints
+    api.add_resource(_CRUD, '/team_member')
+    api.add_resource(_BY_CAR, '/team_member/car')

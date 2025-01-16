@@ -77,6 +77,26 @@ class TeamMember(db.Model):
             db.session.rollback()
             raise e
 
+    @staticmethod
+    def restore(data):
+        """
+        Restore members from a list of dictionaries.
+
+        Args:
+            data (list): List of dictionaries containing vote data.
+        
+        Returns:
+            list: List of restored Vote objects.
+        """
+        restored_members = {}
+        for team_member in data:
+            team_member_id = team_member.pop('id', None)
+            member = TeamMember.query.filter_by(email=team_member['email']).first()
+            if member:
+                member.update(team_member)
+                restored_members[team_member_id] = member
+        return restored_members
+
 def initTeamMembers():
     """
     Initialize the TeamMember table with default data.
