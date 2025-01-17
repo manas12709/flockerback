@@ -1,79 +1,55 @@
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
-import requests
-import json
-import sqlite3
-from flask_cors import CORS
+from __init__ import db
+from model.poll import Poll
 
-#original code, not copied from templates/mr. mort/ChatGPT
-
-# Create blueprint for the poll API
-poll_api = Blueprint('poll_api', __name__, url_prefix='/api/')
+# Blueprint for Poll API
+poll_api = Blueprint('poll_api', __name__, url_prefix='/api')
 api = Api(poll_api)
 
-db_path = 'instance/volumes/user_management.db'
-CORS(poll_api)
+class PollAPI:
+    """
+    Define the API endpoints for the Poll model.
+    """
 
-# Create a class for the poll API
-class Poll:
     class _Read(Resource):
+        """
+        GET request handler: Read all polls.
+        """
         def get(self):
             try:
-                # Retrieve the poll data
-                connection = sqlite3.connect(db_path)
-                cursor = connection.cursor()
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS polls (
-                        _pid INTEGER PRIMARY KEY AUTOINCREMENT,
-                        _name TEXT,
-                        _interests TEXT
-                    );
-                """)
-                query = 'SELECT _name, _interests FROM polls;'  # Query to get the interests and names of users
-                cursor.execute(query)
-                
-
-                results = cursor.fetchall()
-                connection.close()
-
-                # Convert the results to JSON
-                response_data = []
-                for row in results:
-                    user_data = {
-                        "name": row[0],
-                        "interests": row[1]
-                    }
-                    response_data.append(user_data)
-
-                return response_data, 200
+                # Retrieve all poll records
+                polls = Poll.query.all()
+                # Convert each poll to a dictionary
+                response_data = [poll.read() for poll in polls]
+                return jsonify(response_data)
             except Exception as e:
-                print(f"Poll Error: {e}")
-                return {'message': 'Error retrieving poll data'}, 400
-            
+                print(f"Poll Read Error: {e}")
+                return {'message': f'Error retrieving poll data: {e}'}, 400
+
     class _Create(Resource):
+        """
+        POST request handler: Create a new poll.
+        """
         def post(self):
             try:
                 data = request.get_json()
-                name = data['name']
-                interests = data['interests']
+                name = data.get('name')
+                interests = data.get('interests')
 
-                connection = sqlite3.connect(db_path)
-                cursor = connection.cursor()
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS polls (
-                        _pid INTEGER PRIMARY KEY AUTOINCREMENT,
-                        _name TEXT,
-                        _interests TEXT
-                    );
-                """)
-                cursor.execute("INSERT INTO polls (_name, _interests) VALUES (?, ?)", (name, interests))
-                connection.commit()
-                connection.close()
+                # Basic validation
+                if not name or interests is None:
+                    return {'message': 'name and interests fields are required.'}, 400
+
+                # Create and save the new Poll
+                new_poll = Poll(name, interests)
+                new_poll.create()
 
                 return {'message': 'Poll data inserted successfully'}, 201
             except Exception as e:
-                print("Poll Error: ", e)
-                return {'message': 'Error inserting poll data'}, 400
+                print(f"Poll Create Error: {e}")
+                return {'message': f'Error inserting poll data: {e}'}, 400
 
-    api.add_resource(_Read, '/poll_read')
-    api.add_resource(_Create, '/poll_add')
+# Map the resources to their endpoints
+api.add_resource(PollAPI._Read, '/poll_read')   # GET -> read all polls
+api.add_resource(PollAPI._Create, '/poll_add')  # POST -> create new poll
