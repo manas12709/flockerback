@@ -54,6 +54,33 @@ class VoteAPI:
             return jsonify(vote.read())
 
         @token_required()
+        def put(self):
+            """
+            Update the vote type for a specific vote by ID.
+            """
+            # Get current user from the token
+            current_user = g.current_user
+            # Get the request data
+            data = request.get_json()
+
+            # Validate required fields
+            if not data:
+                return {'message': 'No input data provided'}, 400
+            if 'post_id' not in data:
+                return {'message': 'Post ID is required'}, 400
+            if 'vote_type' not in data or data['vote_type'] not in ['upvote', 'downvote']:
+                return {'message': 'Vote type must be "upvote" or "downvote"'}, 400
+
+            # Find the vote by ID and ensure it belongs to the current user
+            vote = Vote.query.filter_by(id=data['post_id'], _user_id=current_user.id).first()
+            if not vote:
+                return {'message': 'Vote not found or not authorized to update this vote'}, 404
+
+            # Update the vote type
+            vote.update(data['vote_type'])
+            return jsonify(vote.read())
+
+        @token_required()
         def delete(self):
             """
             Remove a vote by a user on a specific post.
