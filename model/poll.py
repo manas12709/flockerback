@@ -39,6 +39,19 @@ class Poll(db.Model):
             "interests": self.interests
         }
 
+    def update(self, data):
+        """
+        Update the school class's data with the provided dictionary.
+        """
+        try:
+            self.name = data.get('name', self.name)
+            self.interests = data.get('interests', self.interests)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+
     def delete(self):
         """
         Remove the poll from the database and commit.
@@ -49,6 +62,34 @@ class Poll(db.Model):
         except Exception as e:
             db.session.rollback()
             raise e
+        
+    @staticmethod
+    def restore(data):
+        """
+        Restore polls from a list of dictionaries.
+        """
+        restored_polls = {}
+        for poll_data in data:
+            try:
+                _ = poll_data.pop('id', None) # remove id column from poll_data
+                name = poll_data.get("name", None)
+                interests = poll_data.get("interests", None)
+
+                poll_key = name
+                poll = Poll.query.filter_by(name=name).first()
+                if poll:
+                    poll.update(poll_data)
+                else:
+                    poll = Poll(**poll_data)
+                    poll.create()
+
+                restored_polls[poll_key] = poll
+            except Exception as e:
+                print(f"Error processing poll data: {poll_data} - {e}")
+                continue
+
+        return restored_polls
+
 
 def initPolls():
     """
@@ -67,32 +108,3 @@ def initPolls():
             db.session.rollback()
             print(f"Error adding poll: {poll.name} - {e}")
 
-@staticmethod
-def restore(data):
-    """
-    Restore polls from a list of dictionaries.
-    """
-    restored_polls = {}
-    for poll_data in data:
-        try:
-            # Remove 'id' if present
-            _ = poll_data.pop('id', None)
-            name = poll_data.get("name")
-
-            if not name:
-                raise ValueError("Missing required field: name.")
-
-            poll_key = name
-            poll = Poll.query.filter_by(name=name).first()
-            if poll:
-                poll.update(poll_data)
-            else:
-                poll = Poll(**poll_data)
-                poll.create()
-
-            restored_polls[poll_key] = poll
-        except Exception as e:
-            print(f"Error processing poll data: {poll_data} - {e}")
-            continue
-
-    return restored_polls

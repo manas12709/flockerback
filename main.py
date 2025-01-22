@@ -40,6 +40,7 @@ from model.post import Post, initPosts
 from model.vote import Vote, initVotes
 from model.player import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
+from model.poll import Poll, initPolls
 from model.school_classes import SchoolClass, initSchoolClasses
 from model.language import Language, initLanguages
 
@@ -171,6 +172,7 @@ def generate_data():
     initSchoolClasses()
     initPlayers()
     initLanguages()
+    initPolls()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
@@ -191,12 +193,12 @@ def extract_data():
         data['sections'] = [section.read() for section in Section.query.all()]
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
-        # data['posts'] = [post.read() for post in Post.query.all()]
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
         data['languages'] = [language.read() for language in Language.query.all()]
         data['top_interests'] = [top_interest.read() for top_interest in TopInterest.query.all()]
+        data['polls'] = [poll.read() for poll in Poll.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -211,7 +213,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player','top_interests']:
+    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -223,9 +225,8 @@ def restore_data(data):
         _ = Section.restore(data['sections'])
         _ = Group.restore(data['groups'], users)
         _ = Channel.restore(data['channels'])
-       # _ = Post.restore(data['posts'])
         _ = SchoolClass.restore(data['school_classes'])
-        # _ = Post.restore(data['posts'])
+        _ = Poll.restore(data['polls'])
         _ = Vote.restore(data['votes'])
         _ = TeamMember.restore(data['team_members'])
         # _ = Player.restore(data['player'])
