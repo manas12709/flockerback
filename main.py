@@ -228,7 +228,7 @@ def restore_data(data):
         # _ = Post.restore(data['posts'])
         _ = Vote.restore(data['votes'])
         _ = TeamMember.restore(data['team_members'])
-        _ = Player.restore(data['player'])
+        # _ = Player.restore(data['player'])
         _ = TopInterest.restore(data['top_interests'])
     print("Data restored to the new database.")
 
