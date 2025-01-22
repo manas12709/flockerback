@@ -72,7 +72,7 @@ class VoteAPI:
                 return {'message': 'Vote type must be "upvote" or "downvote"'}, 400
 
             # Find the vote by ID and ensure it belongs to the current user
-            vote = Vote.query.filter_by(id=data['post_id'], _user_id=current_user.id).first()
+            vote = Vote.query.filter_by(_post_id=data['post_id'], _user_id=current_user.id).first()
             if not vote:
                 return {'message': 'Vote not found or not authorized to update this vote'}, 404
 

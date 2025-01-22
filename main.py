@@ -44,6 +44,7 @@ from model.school_classes import SchoolClass, initSchoolClasses
 from model.language import Language, initLanguages
 
 from model.topusers import TopUser
+from model.topinterests import TopInterest, initTopInterests
 # server only Views
 
 # register URIs for api endpoints
@@ -195,6 +196,7 @@ def extract_data():
         data['votes'] = [vote.read() for vote in Vote.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
         data['languages'] = [language.read() for language in Language.query.all()]
+        data['top_interests'] = [top_interest.read() for top_interest in TopInterest.query.all()]
     return data
 
 # Save extracted data to JSON files
@@ -209,7 +211,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player']:
+    for table in ['users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player','top_interests']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -226,7 +228,8 @@ def restore_data(data):
         # _ = Post.restore(data['posts'])
         _ = Vote.restore(data['votes'])
         _ = TeamMember.restore(data['team_members'])
-        _ = Player.restore(data['player'])
+        # _ = Player.restore(data['player'])
+        _ = TopInterest.restore(data['top_interests'])
     print("Data restored to the new database.")
 
 # Define a command to backup data
@@ -244,11 +247,6 @@ def restore_data_command():
     
 # Register the custom command group with the Flask application
 app.cli.add_command(custom_cli)
-        
-# this runs the flask application on the development server
-if __name__ == "__main__":
-    # change name for testing
-    app.run(debug=True, host="0.0.0.0", port="8887")
         
 # this runs the flask application on the development server
 if __name__ == "__main__":
