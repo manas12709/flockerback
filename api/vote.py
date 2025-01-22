@@ -108,19 +108,11 @@ class VoteAPI:
             """
             Retrieve all votes for a specific post, including counts of upvotes and downvotes.
             """
-            # Attempt to get post_id from query parameters first
+            # Get post_id from query parameters
             post_id = request.args.get('post_id')
             
-            # If not found in query params, try to parse from JSON body
             if not post_id:
-                try:
-                    data = request.get_json()
-                    post_id = data.get('post_id') if data else None
-                except:
-                    return {'message': 'Post ID is required either as a query parameter or in the JSON body'}, 400
-
-            if not post_id:
-                return {'message': 'Post ID is required'}, 400
+                return {'message': 'Post ID is required as a query parameter'}, 400
 
             # Get all votes for the post
             votes = Vote.query.filter_by(_post_id=post_id).all()
