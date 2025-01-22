@@ -31,24 +31,25 @@ class PollAPI:
         """
         POST request handler: Create a new poll.
         """
-        def post(self):
-            try:
-                data = request.get_json()
-                name = data.get('name')
-                interests = data.get('interests')
+    def post(self):
+        try:
+            data = request.get_json()
+            name = data.get('name')
+            interests = data.get('interests')
 
-                # Basic validation
-                if not name or interests is None:
-                    return {'message': 'name and interests fields are required.'}, 400
+            # Basic validation
+            if not name or interests is None:
+                return {'message': 'name and interests fields are required.'}, 400
 
-                # Create and save the new Poll
-                new_poll = Poll(name, interests)
-                new_poll.create()
+            # Create and save the new Poll
+            new_poll = Poll(name, interests)
+            new_poll.create()
 
-                return {'message': 'Poll data inserted successfully'}, 201
-            except Exception as e:
-                print(f"Poll Create Error: {e}")
-                return {'message': f'Error inserting poll data: {e}'}, 400
+            return {'message': 'Poll data inserted successfully'}, 201
+
+        except Exception as e:
+            print(f"Poll Create Error: {e}")
+            return {'message': f'Error inserting poll data: {e}'}, 400
 
 # Map the resources to their endpoints
 api.add_resource(PollAPI._Read, '/poll_read')   # GET -> read all polls
