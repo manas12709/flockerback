@@ -10,24 +10,19 @@ class TopInterest(db.Model):
     """
     __tablename__ = 'top_interests'
 
-    rank = db.Column(db.Integer, primary_key=True)
-    interest = db.Column(db.String(50), nullable=False)
+    _interests = db.Column(db.String(50), primary_key=True, nullable=False)
     count = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, interest, count):
+    def __init__(self, _interests, count):
         """
-        Constructor to initialize a TopInterest.
-
-        Args:
-            interest (str): The name of the interest.
-            count (int): The number of users who share this interest.
+        Initialize a TopInterest instance.
         """
-        self.interest = interest
+        self._interests = _interests
         self.count = count
 
     def create(self):
         """
-        Add the interest to the database and commit the transaction.
+        Add the TopInterest instance to the database and commit.
         """
         try:
             db.session.add(self)
@@ -38,28 +33,20 @@ class TopInterest(db.Model):
 
     def read(self):
         """
-        Retrieve the interest's data as a dictionary.
-
-        Returns:
-            dict: Dictionary with interest information.
+        Retrieve the TopInterest instance data as a dictionary.
         """
         return {
-            "rank": self.rank,
-            "interest": self.interest,
+            "_interests": self._interests,
             "count": self.count
         }
 
-    def update(self, interest, count):
+    def update(self, data):
         """
-        Update the interest and count, then commit the transaction.
-
-        Args:
-            interest (str): The name of the interest.
-            count (int): The number of users who share this interest.
+        Update the TopInterest instance with the provided data dictionary.
         """
         try:
-            self.interest = interest
-            self.count = count
+            self._interests = data.get('_interests', self._interests)
+            self.count = data.get('count', self.count)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -67,7 +54,7 @@ class TopInterest(db.Model):
 
     def delete(self):
         """
-        Remove the interest from the database and commit the transaction.
+        Remove the TopInterest instance from the database and commit.
         """
         try:
             db.session.delete(self)
@@ -79,29 +66,29 @@ class TopInterest(db.Model):
     @staticmethod
     def restore(data):
         """
-        Restore interests from a list of dictionaries.
-
-        Args:
-            data (list): List of dictionaries containing interest data.
-
-        Returns:
-            dict: Dictionary of restored TopInterest objects.
+        Restore TopInterest instances from a list of dictionaries.
         """
         restored_interests = {}
         for interest_data in data:
-            interest = interest_data.get("interest")
-            count = interest_data.get("count")
-            if not interest or count is None:
-                raise ValueError("Missing required fields: interest or count.")
+            try:
+                _interests = interest_data.get("_interests", None)
+                count = interest_data.get("count", None)
 
-            top_interest = TopInterest.query.filter_by(interest=interest).first()
-            if top_interest:
-                top_interest.update(interest, count)
-            else:
-                top_interest = TopInterest(interest=interest, count=count)
-                top_interest.create()
+                if not _interests or count is None:
+                    continue
 
-            restored_interests[interest] = top_interest
+                interest_key = _interests
+                top_interest = TopInterest.query.filter_by(_interests=_interests).first()
+                if top_interest:
+                    top_interest.update(interest_data)
+                else:
+                    top_interest = TopInterest(**interest_data)
+                    top_interest.create()
+
+                restored_interests[interest_key] = top_interest
+            except Exception as e:
+                print(f"Error processing interest data: {interest_data} - {e}")
+                continue
 
         return restored_interests
 
@@ -111,55 +98,50 @@ def initTopInterests():
     Initialize the TopInterest table with default data.
     """
     with app.app_context():
-        # Create database tables if they don't exist
         db.create_all()
 
-        # Static data
         top_interests = [
-            Interest("Music", "150"),
-            Interest("Technology", "120"),
-            Interest("Physics", "100"),
-            Interest("Chemistry", "80"),
-            Interest("Sports", "60"),
-            Interest("Art", "40")
+            {"_interests": "Programming", "count": 10},
+            {"_interests": "Reading", "count": 8},
+            {"_interests": "Physics", "count": 6},
+            {"_interests": "Mathematics", "count": 5},
+            {"_interests": "Nature", "count": 4},
         ]
 
-        # Add static data to the database
-        for rank, interest_data in enumerate(static_interests, start=1):
+        for interest_data in initial_data:
             try:
-                interest = TopInterest(**interest_data)
-                interest.rank = rank
-                db.session.add(interest)
-                db.session.commit()
-                print(f"Added Static Interest: Rank {rank}, {interest.interest}, Count {interest.count}")
-            except IntegrityError:
-                db.session.rollback()
-                print(f"Duplicate or error: Rank {rank}, {interest_data['interest']}")
-
-        # Retrieve all users
-        users = User.query.all()
-
-        # Count the occurrences of each interest
-        interest_counts = {}
-        for user in users:
-            interests = user.interests.split(", ")
-            for interest in interests:
-                if interest in interest_counts:
-                    interest_counts[interest] += 1
-                else:
-                    interest_counts[interest] = 1
-
-        # Sort interests by count in descending order
-        sorted_interests = sorted(interest_counts.items(), key=lambda x: x[1], reverse=True)
-
-        # Create TopInterest entries from user data
-        for rank, (interest, count) in enumerate(sorted_interests, start=1):
-            try:
-                top_interest = TopInterest(interest=interest, count=count)
-                top_interest.rank = rank
+                top_interest = TopInterest(**interest_data)
                 db.session.add(top_interest)
                 db.session.commit()
-                print(f"Added User Interest: Rank {rank}, {interest}, Count {count}")
+                print(f"Added interest: {top_interest._interests}")
             except IntegrityError:
                 db.session.rollback()
-                print(f"Duplicate or error: Rank {rank}, {interest}")
+                print(f"Duplicate or error for interest: {interest_data['_interests']}")
+
+
+def updateTopInterests():
+    """
+    Dynamically update the TopInterest table based on user data.
+    """
+    with app.app_context():
+        all_users = User.query.all()
+        interest_counts = {}
+
+        for user in all_users:
+            user_interests = user._interests.split(", ")
+            for interest in user_interests:
+                interest_counts[interest] = interest_counts.get(interest, 0) + 1
+
+        for _interests, count in interest_counts.items():
+            top_interest = TopInterest.query.filter_by(_interests=_interests).first()
+            if top_interest:
+                top_interest.update({"_interests": _interests, "count": count})
+            else:
+                try:
+                    top_interest = TopInterest(_interests=_interests, count=count)
+                    db.session.add(top_interest)
+                    db.session.commit()
+                    print(f"Added interest: {top_interest._interests} with count: {top_interest.count}")
+                except IntegrityError:
+                    db.session.rollback()
+                    print(f"Error adding interest: {_interests}")

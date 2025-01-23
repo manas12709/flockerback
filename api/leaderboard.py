@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 from model.user import User
 from __init__ import db
-from model.topusers import TopUser
 from model.topinterests import TopInterest
 
 # Create blueprint for the leaderboard API
@@ -26,7 +25,7 @@ class Leaderboard:
                     return {'message': 'User not found'}, 404
                 
                 # Split the current user's interests into a set of interests
-                current_user_interests = set(current_user.interests.split(", "))
+                current_user_interests = set(current_user._interests.split(", "))
                 
                 # Query the database to get all users except the current user
                 all_users = User.query.filter(User.id != current_user_id).all()
@@ -35,7 +34,7 @@ class Leaderboard:
                 # Iterate over all users
                 for user in all_users:
                     # Split each user's interests into a set of interests
-                    user_interests = set(user.interests.split(", "))
+                    user_interests = set(user._interests.split(", "))
                     
                     # Find the shared interests between the current user and each user
                     shared_interests = current_user_interests.intersection(user_interests)
@@ -43,7 +42,7 @@ class Leaderboard:
                     # If there are shared interests, add the user to the matched users list
                     if shared_interests:
                         matched_users.append({
-                            'username': user.name,
+                            'username': user._name,
                             'shared_interests': list(shared_interests)
                         })
                 
@@ -60,14 +59,14 @@ class Leaderboard:
     class _TopInterests(Resource):
         def get(self):
             try:
-                # Get all users
+                # Retrieve all users
                 all_users = User.query.all()
                 
                 interest_counts = {}
                 # Iterate over all users
                 for user in all_users:
                     # Split each user's interests into a list of interests
-                    interests = user.interests.split(", ")
+                    interests = user._interests.split(", ")
                     
                     # Count the occurrences of each interest
                     for interest in interests:
@@ -93,11 +92,11 @@ class Leaderboard:
             """
             data = request.get_json()
 
-            if not data or 'interest' not in data or 'count' not in data:
+            if not data or '_interests' not in data or 'count' not in data:
                 return {'message': 'Interest and count are required'}, 400
 
             top_interest = TopInterest(
-                interest=data['interest'],
+                _interests=data['_interests'],
                 count=data['count']
             )
 
@@ -109,51 +108,40 @@ class Leaderboard:
 
         def get(self):
             """
-            Retrieve all top interests or a specific top interest by ID.
+            Retrieve all top interests.
             """
-            interest_id = request.args.get('id')
-
-            if interest_id:
-                top_interest = TopInterest.query.get(interest_id)
-                if not top_interest:
-                    return {'message': 'Top interest not found'}, 404
-                return jsonify(top_interest.read())
-
             top_interests = TopInterest.query.all()
             return jsonify([top_interest.read() for top_interest in top_interests])
 
         def put(self):
             """
-            Update an existing top interest by ID.
+            Update an existing top interest.
             """
             data = request.get_json()
 
-            if not data or 'id' not in data:
-                return {'message': 'ID is required for updating a top interest'}, 400
+            if not data or '_interests' not in data:
+                return {'message': 'Interest is required for updating a top interest'}, 400
 
-            top_interest = TopInterest.query.get(data['id'])
+            top_interest = TopInterest.query.filter_by(_interests=data['_interests']).first()
             if not top_interest:
                 return {'message': 'Top interest not found'}, 404
 
             try:
-                for key, value in data.items():
-                    if hasattr(top_interest, key):
-                        setattr(top_interest, key, value)
-                db.session.commit()
+                top_interest.update(data)
                 return jsonify(top_interest.read())
             except Exception as e:
                 return {'message': f'Error updating top interest: {e}'}, 500
 
         def delete(self):
             """
-            Delete a top interest by ID.
+            Delete a top interest.
             """
             data = request.get_json()
 
-            if not data or 'id' not in data:
-                return {'message': 'ID is required for deleting a top interest'}, 400
+            if not data or '_interests' not in data:
+                return {'message': 'Interest is required for deleting a top interest'}, 400
 
-            top_interest = TopInterest.query.get(data['id'])
+            top_interest = TopInterest.query.filter_by(_interests=data['_interests']).first()
             if not top_interest:
                 return {'message': 'Top interest not found'}, 404
 
