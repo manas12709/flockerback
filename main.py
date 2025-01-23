@@ -26,6 +26,7 @@ from api.poll import poll_api
 from api.teaminfo import team_member_api
 from api.school_classes import school_class_api
 from api.language import language_api
+from api.interests import interests_api  # Import the new interests API
 
 from api.leaderboard import leaderboard_api
 
@@ -62,6 +63,7 @@ app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
 app.register_blueprint(player_api)
 app.register_blueprint(language_api)
+app.register_blueprint(interests_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"

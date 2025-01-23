@@ -90,17 +90,12 @@ class UserAPI:
             if uid is None or len(uid) < 2:
                 return {'message': 'User ID is missing, or is less than 2 characters'}, 400
 
-            # Validate interests
-            interests = body.get('interests', '')
-            if not isinstance(interests, str):
-                return {'message': 'Interests must be a string'}, 400
-
             followers = body.get('followers', '')
             if not isinstance(followers, str):
                 return {'message': 'Followers must be a string'}, 400
 
             # Setup minimal USER OBJECT
-            user_obj = User(name=name, uid=uid, interests=interests, followers=followers)
+            user_obj = User(name=name, uid=uid, followers=followers)
 
             # Add user to database
             user = user_obj.create(body)  # pass the body elements to be saved in the database
@@ -251,18 +246,6 @@ class UserAPI:
             ''' Return the current user as a json object '''
             return jsonify(current_user.read())
         
-    class _Interests(Resource):
-        @token_required()
-        def get(self):
-            """
-            Return the interests of the authenticated user as a JSON object.
-            """
-            current_user = g.current_user
-            interests = current_user.interests
-            if not interests:
-                return {'message': 'No interests found for this user'}, 404
-            return jsonify(interests)
-
     class _Followers(Resource):
         @token_required()
         def get(self):
@@ -280,5 +263,4 @@ api.add_resource(UserAPI._ID, '/id')
 api.add_resource(UserAPI._BULK_CRUD, '/users')
 api.add_resource(UserAPI._CRUD, '/user')
 api.add_resource(UserAPI._Security, '/authenticate')
-api.add_resource(UserAPI._Interests, '/interests')
 api.add_resource(UserAPI._Followers, '/followers')
