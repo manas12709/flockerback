@@ -200,6 +200,7 @@ def extract_data():
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
+        data['chat'] = [chat.read() for chat in Chat.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
         data['languages'] = [language.read() for language in Language.query.all()]
@@ -219,7 +220,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player', 'top_interests', 'languages']:
+    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player', 'top_interests', 'languages', 'chat']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -235,6 +236,7 @@ def restore_data(data):
         _ = Poll.restore(data['polls'])
         _ = Vote.restore(data['votes'])
         _ = TeamMember.restore(data['team_members'])
+        _ = Chat.restore(data['chat'])
         # _ = Player.restore(data['player'])
         _ = TopInterest.restore(data['top_interests'])
         _ = Language.restore(data['languages'])

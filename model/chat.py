@@ -110,6 +110,27 @@ class Chat(db.Model):
         except Exception as e:
             db.session.rollback()
             raise e
+    @staticmethod
+    def restore(data):
+        """
+        Restore chats from a list of dictionaries.
+        Args:
+            data (list): A list of dictionaries containing chat data.
+        Returns:
+            dict: A dictionary of restored chats keyed by message ID.
+        """
+        restored_chats = {}
+        for chat_data in data:
+            _ = chat_data.pop('id', None)  # Remove 'id' from chat_data if present
+            message = chat_data.get("message", None)
+            chat = Chat.query.filter_by(_message=message).first()
+            if chat:
+                chat.update(chat_data)
+            else:
+                chat = Chat(**chat_data)
+                chat.create()
+            restored_chats[message] = chat
+        return restored_chats
 
 def initChats():
     """
