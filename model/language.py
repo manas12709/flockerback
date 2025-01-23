@@ -79,6 +79,30 @@ class Language(db.Model):
             'creator': self.creator
         }
 
+    @staticmethod
+    def restore(data):
+        """
+        Restore languages from a list of dictionaries, replacing existing entries.
+
+        Args:
+            data (list): List of dictionaries containing language data.
+        
+        Returns:
+            dict: Dictionary of restored Language objects.
+        """
+        with app.app_context():
+            # Clear the existing table
+            db.session.query(Language).delete()
+            db.session.commit()
+
+            restored_classes = {}
+            for language_data in data:
+                language = Language(name=language_data['name'], creator=language_data['creator'])
+                language.create()
+                restored_classes[language_data['id']] = language
+            
+            return restored_classes
+
 def initLanguages():
     """
     The initLanguages function creates the Languages table and adds tester data to the table.

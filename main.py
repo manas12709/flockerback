@@ -10,8 +10,6 @@ from flask import current_app
 from werkzeug.security import generate_password_hash
 import shutil
 
-
-
 # import "objects" from "this" project
 from __init__ import app, db, login_manager  # Key Flask objects 
 # API endpoints
@@ -203,7 +201,7 @@ def extract_data():
         data['chat'] = [chat.read() for chat in Chat.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
-       # data['languages'] = [language.read() for language in Language.query.all()]
+        data['languages'] = [language.read() for language in Language.query.all()]
         data['top_interests'] = [top_interest.read() for top_interest in TopInterest.query.all()]
         data['polls'] = [poll.read() for poll in Poll.query.all()]
     return data
@@ -220,7 +218,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'top_interests', 'chat']:
+    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'top_interests', 'chat', 'languages']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -239,7 +237,7 @@ def restore_data(data):
         _ = Chat.restore(data['chat'])
         # _ = Player.restore(data['player'])
         _ = TopInterest.restore(data['top_interests'])
-       # _ = Language.restore(data['languages'])
+        _ = Language.restore(data['languages'])
     print("Data restored to the new database.")
 
 # Define a command to backup data
