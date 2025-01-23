@@ -31,18 +31,21 @@ class ChatAPI:
         @token_required()
         def get(self):
             """
-            Retrieve a single chat message by ID.
+            Retrieve all chat messages by channel ID.
             """
-            data = request.get_json()
-            if 'id' not in data:
-                return {'message': 'Chat ID is required'}, 400
+            # Extract channel_id from query parameters
+            channel_id = request.args.get('id')
+            if not channel_id:
+                return {'message': 'Channel ID is required'}, 400
 
-            # Find the chat by ID
-            chat = Chat.query.get(data['id'])
-            if not chat:
-                return {'message': 'Chat message not found'}, 404
+            # Query all chat messages for the given channel_id
+            chats = Chat.query.filter_by(_channel_id=channel_id).all()
+            if not chats:
+                return {'message': 'No chat messages found for this channel'}, 404
 
-            return jsonify(chat.read())
+            # Return the list of chats in JSON format
+            return jsonify([chat.read() for chat in chats])
+
 
         @token_required()
         def put(self):
