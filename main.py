@@ -25,6 +25,7 @@ from api.player import player_api
 from api.poll import poll_api
 from api.teaminfo import team_member_api
 from api.school_classes import school_class_api
+from api.chat import chat_api
 from api.language import language_api
 
 from api.leaderboard import leaderboard_api
@@ -42,6 +43,7 @@ from model.player import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
 from model.school_classes import SchoolClass, initSchoolClasses
 from model.language import Language, initLanguages
+from model.chat import Chat, initChats
 
 from model.topusers import TopUser
 from model.topinterests import TopInterest, initTopInterests
@@ -56,6 +58,7 @@ app.register_blueprint(group_api)
 app.register_blueprint(section_api)
 app.register_blueprint(vote_api)
 app.register_blueprint(school_class_api)
+app.register_blueprint(chat_api)
 app.register_blueprint(team_member_api)
 app.register_blueprint(poll_api)
 app.register_blueprint(leaderboard_api)
@@ -166,6 +169,7 @@ def generate_data():
     initGroups()
     initChannels()
     initPosts()
+    initChats()
     initVotes()
     initTeamMembers()
     initSchoolClasses()
