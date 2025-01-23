@@ -219,7 +219,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player', 'top_interests']:
+    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'player', 'top_interests', 'languages']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -237,6 +237,7 @@ def restore_data(data):
         _ = TeamMember.restore(data['team_members'])
         # _ = Player.restore(data['player'])
         _ = TopInterest.restore(data['top_interests'])
+        _ = Language.restore(data['languages'])
     print("Data restored to the new database.")
 
 # Define a command to backup data

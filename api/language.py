@@ -1,124 +1,100 @@
-from flask import Blueprint, request, jsonify
-from flask_restful import Api, Resource
-from __init__ import db
+import jwt
+from flask import Blueprint, request, jsonify, current_app, Response, g
+from flask_restful import Api, Resource  # used for REST API building
+from __init__ import app
+from api.jwt_authorize import token_required
 from model.language import Language
 
-# Define the Blueprint for the Language API
+# Create a Blueprint for the language API
 language_api = Blueprint('language_api', __name__, url_prefix='/api')
 
-# Connect the Api object to the Blueprint
+# Create an Api object and associate it with the Blueprint
 api = Api(language_api)
 
 class LanguageAPI:
-    """
-    Define the API CRUD endpoints for the Language model.
-    """
+    class _Language(Resource):
+        """
+        API operations for managing language entries.
+        """
 
-    class _CRUD(Resource):
+        @token_required()
         def post(self):
             """
-            Create a new language.
+            Add a new language entry.
             """
-            data = request.get_json()
+            body = request.get_json()
 
             # Validate required fields
-            if not data or 'name' not in data or 'paradigm' not in data:
-                return {'message': 'Name and paradigm are required'}, 400
+            name = body.get('name')
+            creator = body.get('creator')
 
-            # Create a new Language object
-            language = Language(
-                name=data['name'],
-                paradigm=data['paradigm'],
-                designed_by=data.get('designed_by', ''),
-                first_appeared=data.get('first_appeared', ''),
-                typing_discipline=data.get('typing_discipline', '')
-            )
+            if not name or not creator:
+                return {'message': 'Name and creator are required'}, 400
 
-            # Save the language using the ORM method
             try:
-                language.create()
-                return jsonify(language.read())
+                # Create a new language entry
+                new_language = Language(name=name, creator=creator)
+                new_language.create()
+                return jsonify({'message': 'Language added successfully', 'language': new_language.read()})
             except Exception as e:
-                return {'message': f'Error creating language: {e}'}, 500
+                return {'message': 'Failed to create language', 'error': str(e)}, 500
 
-        def get(self):
-            """
-            Retrieve all languages or a specific language by ID.
-            """
-            language_id = request.args.get('id')
-
-            if language_id:
-                # Get a specific language by ID
-                language = Language.query.get(language_id)
-                if not language:
-                    return {'message': 'Language not found'}, 404
-                return jsonify(language.read())
-
-            # Get all languages
-            languages = Language.query.all()
-            return jsonify([language.read() for language in languages])
-
+        @token_required()
         def put(self):
             """
-            Update an existing language by ID.
+            Update an existing language entry.
             """
-            data = request.get_json()
+            body = request.get_json()
 
-            if not data or 'id' not in data:
+            # Validate required fields
+            language_id = body.get('id')
+            if not language_id:
                 return {'message': 'ID is required for updating a language'}, 400
 
-            # Find the language by ID
-            language = Language.query.get(data['id'])
+            language = Language.query.get(language_id)
             if not language:
                 return {'message': 'Language not found'}, 404
 
-            # Update the language
             try:
-                for key, value in data.items():
-                    if hasattr(language, key):
-                        setattr(language, key, value)
-                db.session.commit()
-                return jsonify(language.read())
+                language.name = body.get('name', language.name)
+                language.creator = body.get('creator', language.creator)
+                language.create()
+                return jsonify({'message': 'Language updated successfully', 'language': language.read()})
             except Exception as e:
-                return {'message': f'Error updating language: {e}'}, 500
+                return {'message': 'Failed to update language', 'error': str(e)}, 500
 
-        def delete(self):
-            """
-            Delete a language by ID.
-            """
-            data = request.get_json()
-
-            if not data or 'id' not in data:
-                return {'message': 'ID is required for deleting a language'}, 400
-
-            # Find the language by ID
-            language = Language.query.get(data['id'])
-            if not language:
-                return {'message': 'Language not found'}, 404
-
-            # Delete the language
-            try:
-                language.delete()
-                return {'message': 'Language deleted successfully'}, 200
-            except Exception as e:
-                return {'message': f'Error deleting language: {e}'}, 500
-
-    class _BY_PARADIGM(Resource):
+        @token_required()
         def get(self):
             """
-            Retrieve all languages from a specific paradigm.
+            Get all language entries.
             """
-            paradigm = request.args.get('paradigm')
+            try:
+                languages = Language.query.all()
+                return jsonify([language.read() for language in languages])
+            except Exception as e:
+                return {'message': 'Failed to retrieve languages', 'error': str(e)}, 500
 
-            if not paradigm:
-                return {'message': 'Paradigm is required'}, 400
+        @token_required()
+        def delete(self):
+            """
+            Delete an existing language entry.
+            """
+            body = request.get_json()
 
-            languages = Language.query.filter(Language.paradigm.like(f"%{paradigm}%")).all()
-            if not languages:
-                return {'message': 'No languages found for the specified paradigm'}, 404
+            # Validate required fields
+            language_id = body.get('id')
+            if not language_id:
+                return {'message': 'ID is required for deleting a language'}, 400
 
-            return jsonify([language.read() for language in languages])
+            language = Language.query.get(language_id)
+            if not language:
+                return {'message': 'Language not found'}, 404
 
-    # Map the resources to API endpoints
-    api.add_resource(_CRUD, '/language')
-    api.add_resource(_BY_PARADIGM, '/language/paradigm')
+            try:
+                language.delete()
+                return jsonify({'message': 'Language deleted successfully'})
+            except Exception as e:
+                return {'message': 'Failed to delete language', 'error': str(e)}, 500
+
+# Register the API resources with the Blueprint
+api.add_resource(LanguageAPI._Language, '/language')
