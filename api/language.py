@@ -27,13 +27,14 @@ class LanguageAPI:
             # Validate required fields
             name = body.get('name')
             creator = body.get('creator')
+            popularity = body.get('popularity', 0)  # Default popularity is 0
 
             if not name or not creator:
                 return {'message': 'Name and creator are required'}, 400
 
             try:
                 # Create a new language entry
-                new_language = Language(name=name, creator=creator)
+                new_language = Language(name=name, creator=creator, popularity=popularity)
                 new_language.create()
                 return jsonify({'message': 'Language added successfully', 'language': new_language.read()})
             except Exception as e:
@@ -58,6 +59,7 @@ class LanguageAPI:
             try:
                 language.name = body.get('name', language.name)
                 language.creator = body.get('creator', language.creator)
+                language.popularity = body.get('popularity', language.popularity)
                 language.create()
                 return jsonify({'message': 'Language updated successfully', 'language': language.read()})
             except Exception as e:
@@ -96,5 +98,33 @@ class LanguageAPI:
             except Exception as e:
                 return {'message': 'Failed to delete language', 'error': str(e)}, 500
 
+    class _Popularity(Resource):
+        """
+        API operations for managing language popularity.
+        """
+
+        @token_required()
+        def post(self):
+            """
+            Upvote the popularity of a language by its ID.
+            """
+            body = request.get_json()
+
+            # Validate required fields
+            language_id = body.get('id')
+            if not language_id:
+                return {'message': 'ID is required for upvoting a language'}, 400
+
+            language = Language.query.get(language_id)
+            if not language:
+                return {'message': 'Language not found'}, 404
+
+            try:
+                language.upvote()
+                return jsonify({'message': 'Popularity increased successfully', 'language': language.read()})
+            except Exception as e:
+                return {'message': 'Failed to increase popularity', 'error': str(e)}, 500
+
 # Register the API resources with the Blueprint
 api.add_resource(LanguageAPI._Language, '/language')
+api.add_resource(LanguageAPI._Popularity, '/language/popularity')

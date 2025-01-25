@@ -10,23 +10,27 @@ class Language(db.Model):
         id (db.Column): The primary key, an integer representing the unique identifier for the record.
         name (db.Column): A string representing the name of the programming language.
         creator (db.Column): A string representing the creator of the programming language.
+        popularity (db.Column): An integer representing the popularity score of the programming language.
     """
     __tablename__ = 'languages'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     creator = db.Column(db.String(255), nullable=False)
+    popularity = db.Column(db.Integer, default=0)  # New attribute with default value 0
 
-    def __init__(self, name, creator):
+    def __init__(self, name, creator, popularity=0):
         """
         Constructor, initializes a Language object.
         
         Args:
             name (str): The name of the programming language.
             creator (str): The creator of the programming language.
+            popularity (int): The initial popularity score (default is 0).
         """
         self.name = name
         self.creator = creator
+        self.popularity = popularity
 
     def __repr__(self):
         """
@@ -36,7 +40,7 @@ class Language(db.Model):
         Returns:
             str: A text representation of how to create the object.
         """
-        return f"Language(id={self.id}, name={self.name}, creator={self.creator})"
+        return f"Language(id={self.id}, name={self.name}, creator={self.creator}, popularity={self.popularity})"
     
     def create(self):
         """
@@ -76,8 +80,20 @@ class Language(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'creator': self.creator
+            'creator': self.creator,
+            'popularity': self.popularity
         }
+
+    def upvote(self):
+        """
+        Increases the popularity of the language by 1.
+        """
+        try:
+            self.popularity += 1
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     @staticmethod
     def restore(data):
@@ -97,7 +113,11 @@ class Language(db.Model):
 
             restored_classes = {}
             for language_data in data:
-                language = Language(name=language_data['name'], creator=language_data['creator'])
+                language = Language(
+                    name=language_data['name'],
+                    creator=language_data['creator'],
+                    popularity=language_data.get('popularity', 0)
+                )
                 language.create()
                 restored_classes[language_data['id']] = language
             
@@ -121,9 +141,9 @@ def initLanguages():
         db.create_all()
         """Tester data for table"""
         tester_data = [
-            Language(name='Python', creator='Guido van Rossum'),
-            Language(name='JavaScript', creator='Brendan Eich'),
-            Language(name='Java', creator='James Gosling')
+            Language(name='Python', creator='Guido van Rossum', popularity=500),
+            Language(name='JavaScript', creator='Brendan Eich', popularity=400),
+            Language(name='Java', creator='James Gosling', popularity=300)
         ]
         
         for data in tester_data:
