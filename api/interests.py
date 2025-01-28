@@ -54,7 +54,7 @@ class InterestsAPI:
             body = request.get_json()
             new_interests = body.get('interests')
             if not new_interests:
-                return {'message': 'No interests provided'}, 400
+                return {'message': 'No new interests provided'}, 400
             formatted_new_interests = re.sub(r'\s*,\s*', ', ', new_interests.strip())
             current_user.interests += ', ' + formatted_new_interests
             current_user.update({'interests': current_user.interests})
