@@ -596,7 +596,6 @@ def initUsers():
                 name='Bobby Bapat',
                 uid='bobby',
                 password='1111',
-                interests="Nature, Physics",
                 followers="niko"
             ),
             User(

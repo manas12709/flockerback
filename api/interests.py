@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify, g
 from flask_restful import Api, Resource
 from __init__ import app
@@ -31,7 +32,7 @@ class InterestsAPI:
         @token_required()
         def post(self):
             """
-            Add new interests to the authenticated user.
+            Create interests for the authenticated user.
             """
             current_user = g.current_user
             body = request.get_json()
@@ -39,23 +40,24 @@ class InterestsAPI:
             if not new_interests:
                 return {'message': 'No interests provided'}, 400
 
-            current_user.interests = new_interests
-            current_user.update()
+            formatted_interests = re.sub(r'\s*,\s*', ', ', new_interests.strip())
+            current_user.interests = formatted_interests
+            current_user.update({'interests': current_user.interests})
             return jsonify(current_user.interests)
 
         @token_required()
         def put(self):
             """
-            Update the interests of the authenticated user.
+            Update and add to the interests of the authenticated user.
             """
             current_user = g.current_user
             body = request.get_json()
-            updated_interests = body.get('interests')
-            if not updated_interests:
+            new_interests = body.get('interests')
+            if not new_interests:
                 return {'message': 'No interests provided'}, 400
-
-            current_user.interests = updated_interests
-            current_user.update(body)
+            formatted_new_interests = re.sub(r'\s*,\s*', ', ', new_interests.strip())
+            current_user.interests += ', ' + formatted_new_interests
+            current_user.update({'interests': current_user.interests})
             return jsonify(current_user.interests)
 
         @token_required()
