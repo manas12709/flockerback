@@ -55,8 +55,11 @@ class InterestsAPI:
             new_interests = body.get('interests')
             if not new_interests:
                 return {'message': 'No new interests provided'}, 400
+
             formatted_new_interests = re.sub(r'\s*,\s*', ', ', new_interests.strip())
-            current_user.interests += ', ' + formatted_new_interests
+            current_interests = current_user.interests.split(', ') if current_user.interests else []
+            combined_interests = list(set(current_interests + formatted_new_interests.split(', ')))
+            current_user.interests = ', '.join(combined_interests)
             current_user.update({'interests': current_user.interests})
             return jsonify(current_user.interests)
 
