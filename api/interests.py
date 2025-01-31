@@ -24,10 +24,10 @@ class InterestsAPI:
             Return the interests of the authenticated user as a JSON object.
             """
             current_user = g.current_user
-            interests = current_user.interests
-            if not interests:
+            user = User.query.filter_by(_uid=current_user.uid).first()
+            if not user or not user.interests:
                 return {'message': 'No interests found for this user'}, 404
-            return jsonify(interests)
+            return jsonify(user.interests)
 
         @token_required()
         def post(self):
@@ -35,15 +35,19 @@ class InterestsAPI:
             Create interests for the authenticated user.
             """
             current_user = g.current_user
+            user = User.query.filter_by(_uid=current_user.uid).first()
+            if not user:
+                return {'message': 'User not found'}, 404
+
             body = request.get_json()
             new_interests = body.get('interests')
             if not new_interests:
                 return {'message': 'No interests provided'}, 400
 
             formatted_interests = re.sub(r'\s*,\s*', ', ', new_interests.strip())
-            current_user.interests = formatted_interests
-            current_user.update({'interests': current_user.interests})
-            return jsonify(current_user.interests)
+            user.interests = formatted_interests
+            user.update({'interests': user.interests})
+            return jsonify(user.interests)
 
         @token_required()
         def put(self):
@@ -51,17 +55,21 @@ class InterestsAPI:
             Update and add to the interests of the authenticated user.
             """
             current_user = g.current_user
+            user = User.query.filter_by(_uid=current_user.uid).first()
+            if not user:
+                return {'message': 'User not found'}, 404
+
             body = request.get_json()
             new_interests = body.get('interests')
             if not new_interests:
                 return {'message': 'No new interests provided'}, 400
 
             formatted_new_interests = re.sub(r'\s*,\s*', ', ', new_interests.strip())
-            current_interests = current_user.interests.split(', ') if current_user.interests else []
+            current_interests = user.interests.split(', ') if user.interests else []
             combined_interests = list(set(current_interests + formatted_new_interests.split(', ')))
-            current_user.interests = ', '.join(combined_interests)
-            current_user.update({'interests': current_user.interests})
-            return jsonify(current_user.interests)
+            user.interests = ', '.join(combined_interests)
+            user.update({'interests': user.interests})
+            return jsonify(user.interests)
 
         @token_required()
         def delete(self):
