@@ -65,9 +65,7 @@ class Poll(db.Model):
         
     @staticmethod
     def restore(data):
-        """
-        Restore polls from a list of dictionaries.
-        """
+        # Restore polls using a list of dictionaries.
         restored_polls = {}
         for poll_data in data:
             try:
