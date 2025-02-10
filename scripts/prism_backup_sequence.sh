@@ -17,4 +17,4 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 cd /home/ubuntu/prism_backend
-./scripts/db_backup.sh
+./scripts/db_backup.py
