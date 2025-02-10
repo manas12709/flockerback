@@ -130,6 +130,12 @@ def u2table():
     users = User.query.all()
     return render_template("u2table.html", user_data=users)
 
+@app.route('/users/votedata')
+@login_required
+def uvote():
+    users = User.query.all()
+    return render_template("uvote.html", user_data=users)
+
 # Helper function to extract uploads for a user (ie PFP image)
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):

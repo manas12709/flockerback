@@ -1,0 +1,149 @@
+{% extends "layouts/base.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Vote Management</h1>
+    <table class="table table-striped" id="voteTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Post ID</th>
+                <th>User ID</th>
+                <th>Vote Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vote in votes %}
+            {% if vote.user_id == current_user.id or current_user.role == 'Admin' %}
+            <tr>
+                <td>{{ vote.id }}</td>
+                <td>{{ vote.post_id }}</td>
+                <td>{{ vote.user_id }}</td>
+                <td id="vote-type-{{ vote.id }}">{{ vote.vote_type }}</td>
+                <td>
+                    <button class="btn btn-success upvote-btn" data-id="{{ vote.id }}">Upvote</button>
+                    <button class="btn btn-danger downvote-btn" data-id="{{ vote.id }}">Downvote</button>
+                    <button class="btn btn-warning delete-vote-btn" data-id="{{ vote.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteVoteModal" tabindex="-1" aria-labelledby="deleteVoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteVoteModalLabel">Delete Vote</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this vote?</p>
+                <input type="hidden" id="deleteVoteId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteVote">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block background %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const upvoteButtons = document.querySelectorAll('.upvote-btn');
+    const downvoteButtons = document.querySelectorAll('.downvote-btn');
+    const deleteButtons = document.querySelectorAll('.delete-vote-btn');
+
+    // Function to update vote type in UI
+    function updateVoteType(voteId, newVoteType) {
+        document.getElementById(`vote-type-${voteId}`).textContent = newVoteType;
+    }
+
+    // Handle upvote
+    upvoteButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const voteId = this.getAttribute('data-id');
+            try {
+                const response = await fetch('/api/vote', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ post_id: voteId, vote_type: 'upvote' })
+                });
+                if (response.ok) {
+                    updateVoteType(voteId, 'upvote');
+                } else {
+                    const result = await response.json();
+                    alert('Failed to upvote: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while upvoting.');
+            }
+        });
+    });
+
+    // Handle downvote
+    downvoteButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const voteId = this.getAttribute('data-id');
+            try {
+                const response = await fetch('/api/vote', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ post_id: voteId, vote_type: 'downvote' })
+                });
+                if (response.ok) {
+                    updateVoteType(voteId, 'downvote');
+                } else {
+                    const result = await response.json();
+                    alert('Failed to downvote: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while downvoting.');
+            }
+        });
+    });
+
+    // Handle delete vote
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const voteId = this.getAttribute('data-id');
+            document.getElementById('deleteVoteId').value = voteId;
+            $('#deleteVoteModal').modal('show');
+        });
+    });
+
+    document.getElementById('confirmDeleteVote').addEventListener('click', async function() {
+        const voteId = document.getElementById('deleteVoteId').value;
+
+        try {
+            const response = await fetch('/api/vote', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ post_id: voteId })
+            });
+
+            if (response.ok) {
+                document.querySelector(`button[data-id="${voteId}"]`).closest('tr').remove();
+                $('#deleteVoteModal').modal('hide');
+            } else {
+                const result = await response.json();
+                alert('Failed to delete vote: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the vote.');
+        }
+    });
+});
+</script>
+{% endblock %}
