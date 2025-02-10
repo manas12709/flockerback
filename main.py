@@ -136,6 +136,18 @@ def uvote():
     users = User.query.all()
     return render_template("uvote.html", user_data=users)
 
+@app.route('/users/settings')
+@login_required
+def usettings():
+    users = User.query.all()
+    return render_template("usettings.html", user_data=users)
+
+@app.route('/users/reports')
+@login_required
+def ureports():
+    users = User.query.all()
+    return render_template("ureports.html", user_data=users)
+
 # Helper function to extract uploads for a user (ie PFP image)
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
