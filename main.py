@@ -38,6 +38,7 @@ from model.group import Group, initGroups
 from model.channel import Channel, initChannels
 from model.post import Post, initPosts
 from model.vote import Vote, initVotes
+from model.skibidi import Skibidi, initSkibidis
 from model.player import Player, initPlayers
 from model.teaminfo import TeamMember, initTeamMembers
 from model.poll import Poll, initPolls
@@ -190,6 +191,7 @@ def generate_data():
     initPosts()
     initChats()
     initVotes()
+    initSkibidis()
     initTeamMembers()
     initSchoolClasses()
     initPlayers()
@@ -218,6 +220,7 @@ def extract_data():
         data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
         data['chat'] = [chat.read() for chat in Chat.query.all()]
         data['votes'] = [vote.read() for vote in Vote.query.all()]
+        data['skibidis'] = [skibidi.read() for skibidi in Skibidi.query.all()]
         data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
         data['languages'] = [language.read() for language in Language.query.all()]
         data['top_interests'] = [top_interest.read() for top_interest in TopInterest.query.all()]
@@ -236,7 +239,7 @@ def save_data_to_json(data, directory='backup'):
 # Load data from JSON files
 def load_data_from_json(directory='backup'):
     data = {}
-    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'team_members', 'top_interests', 'chat', 'languages']:
+    for table in ['polls', 'users', 'sections', 'groups', 'channels', 'school_classes', 'votes', 'skibidis', 'team_members', 'top_interests', 'chat', 'languages']:
         with open(os.path.join(directory, f'{table}.json'), 'r') as f:
             data[table] = json.load(f)
     return data
@@ -251,6 +254,7 @@ def restore_data(data):
         _ = SchoolClass.restore(data['school_classes'])
         _ = Poll.restore(data['polls'])
         _ = Vote.restore(data['votes'])
+        _ = Skibidi.restore(data['skibidis'])
         _ = TeamMember.restore(data['team_members'])
         _ = Chat.restore(data['chat'])
         # _ = Player.restore(data['player'])
