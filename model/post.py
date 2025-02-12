@@ -197,9 +197,9 @@ def initPosts():
             Post(title='Section post2', comment='Section post2', user_id=2, channel_id=1),
             Post(title='Section post3', comment='Section post3', user_id=2, channel_id=1),
             Post(title='Section post4', comment='Section post4', user_id=2, channel_id=1),
-            Post(title='Added Group and Channel Select', comment='The Home Page has a Section, on this page we can select Group and Channel to allow blog filtering', content={'type': 'announcement'}, user_id=1, channel_id=1),
-            Post(title='JSON content saving through content"field in database', comment='You could add other dialogs to a post that would allow custom data or even storing reference to uploaded images.', content={'type': 'announcement'}, user_id=1, channel_id=1),
-            Post(title='Allows Post by different Users', comment='Different users seeing content is a key concept in social media.', content={'type': 'announcement'}, user_id=2, channel_id=1),
+            Post(title='Computer Science', comment='Answer Computer Science Question Here', content={'type': 'announcement'}, user_id=1, channel_id=1),
+            Post(title='Literature', comment='Answer Literature Question Here', content={'type': 'announcement'}, user_id=1, channel_id=1),
+            Post(title='History', comment='Answer History Question Here', content={'type': 'announcement'}, user_id=2, channel_id=1),
         ]
         
         for post in posts:
