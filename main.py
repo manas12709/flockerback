@@ -30,6 +30,8 @@ from api.chat_met import chat_met_api
 from api.vote_met import vote_met_api
 from api.language_met import language_met_api
 from api.usettings import settings_api
+from api.user_met import user_met_api
+from api.post_met import post_met_api
 
 from api.leaderboard import leaderboard_api
 
@@ -74,6 +76,9 @@ app.register_blueprint(interests_api)
 app.register_blueprint(chat_met_api)
 app.register_blueprint(vote_met_api)
 app.register_blueprint(language_met_api)
+app.register_blueprint(user_met_api)
+app.register_blueprint(post_met_api)
+
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
