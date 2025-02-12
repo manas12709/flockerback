@@ -153,9 +153,9 @@ def initChats():
             Chat(message="Hi!", user_id=1, channel_id=8),
             Chat(message="Hello, how are you Toby?", user_id=2, channel_id=8),
             Chat(message="I'm good. What are your opinions on the new physics law that was just discovered?", user_id=1, channel_id=8),
-            Chat(message="I think its quite amazing. Let's discuss the project.", user_id=2, channel_id=2),
-            Chat(message="How can this impact the world later on?", user_id=1, channel_id=1),
-            Chat(message="Not sure... but whatever it does, it will be MASSIVE. I know it.", user_id=2, channel_id=3),
+            Chat(message="I think its quite amazing. Let's discuss the project.", user_id=2, channel_id=8),
+            Chat(message="How can this impact the world later on?", user_id=1, channel_id=8),
+            Chat(message="Not sure... but whatever it does, it will be MASSIVE. I know it.", user_id=2, channel_id=8),
         ]
 
         for chat in chats:
