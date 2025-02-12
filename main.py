@@ -28,6 +28,7 @@ from api.language import language_api
 from api.interests import interests_api  # Import the new interests API
 from api.chat_met import chat_met_api
 from api.vote_met import vote_met_api
+from api.usettings import settings_api
 
 from api.leaderboard import leaderboard_api
 
@@ -50,6 +51,7 @@ from model.chat import Chat, initChats
 
 from model.topusers import TopUser
 from model.topinterests import TopInterest, initTopInterests
+from model.usettings import Settings  # Import the Settings model
 # server only Views
 
 # register URIs for api endpoints
@@ -158,7 +160,18 @@ def usettings():
 def ureports():
     users = User.query.all()
     return render_template("ureports.html", user_data=users)
-    
+
+@app.route('/general-settings', methods=['GET', 'POST'])
+@login_required
+def general_settings():
+    settings = Settings.query.first()
+    if request.method == 'POST':
+        settings.description = request.form['description']
+        settings.contact_email = request.form['contact_email']
+        settings.contact_phone = request.form['contact_phone']
+        db.session.commit()
+        return redirect(url_for('general_settings'))
+    return render_template('ugeneralsettings.html', settings=settings)
 
 # Helper function to extract uploads for a user (ie PFP image)
 @app.route('/uploads/<path:filename>')
