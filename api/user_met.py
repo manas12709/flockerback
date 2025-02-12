@@ -138,7 +138,7 @@ class UserAPI:
 
             return jsonify(user.read())
 
-        @token_required("Admin")
+        login_required
         def delete(self):
             """
             Delete a user.
