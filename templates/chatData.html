@@ -71,7 +71,7 @@
 <script>
     async function fetchChats() {
         try {
-            const response = await fetch(`/api/chatmet`); // Replace 1 with dynamic channel_id
+            const response = await fetch(`/api/chatmet`);
             if (!response.ok) throw new Error('Failed to fetch chats');
             const chats = await response.json();
             const chatBody = document.getElementById('chatBody');
