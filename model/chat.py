@@ -145,24 +145,24 @@ def initChats():
     Raises:
         IntegrityError: An error occurred when adding the tester data to the table.
     """
-    # with app.app_context():
-    #     """Create database and tables"""
-    #     db.create_all()
-    #     """Tester data for table"""
-    #     chats = [
-    #         Chat(message="Hello, world!", user_id=1, channel_id=1),
-    #         Chat(message="How's everyone doing?", user_id=2, channel_id=1),
-    #         Chat(message="Welcome to the new channel!", user_id=3, channel_id=2),
-    #         Chat(message="Let's discuss the project.", user_id=1, channel_id=2),
-    #         Chat(message="Testing the chat functionality.", user_id=4, channel_id=1),
-    #         Chat(message="This is for general discussions.", user_id=2, channel_id=3),
-    #     ]
+    with app.app_context():
+        """Create database and tables"""
+        db.create_all()
+        """Tester data for table"""
+        chats = [
+            Chat(message="Hello, world!", user_id=1, channel_id=1),
+            Chat(message="How's everyone doing?", user_id=2, channel_id=1),
+            Chat(message="Welcome to the new channel!", user_id=3, channel_id=2),
+            Chat(message="Let's discuss the project.", user_id=1, channel_id=2),
+            Chat(message="Testing the chat functionality.", user_id=4, channel_id=1),
+            Chat(message="This is for general discussions.", user_id=2, channel_id=3),
+        ]
 
-    #     for chat in chats:
-    #         try:
-    #             chat.create()
-    #             print(f"Record created: {repr(chat)}")
-    #         except IntegrityError:
-    #             db.session.remove()
-    #             print(f"Record exists or error: {chat._message}")
+        for chat in chats:
+            try:
+                chat.create()
+                print(f"Record created: {repr(chat)}")
+            except IntegrityError:
+                db.session.remove()
+                print(f"Record exists or error: {chat._message}")
     print("All non test chats initiated")

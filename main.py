@@ -26,6 +26,7 @@ from api.school_classes import school_class_api
 from api.chat import chat_api
 from api.language import language_api
 from api.interests import interests_api  # Import the new interests API
+from api.chat_met import chat_met_api
 
 from api.leaderboard import leaderboard_api
 
@@ -65,6 +66,7 @@ app.register_blueprint(leaderboard_api)
 app.register_blueprint(player_api)
 app.register_blueprint(language_api)
 app.register_blueprint(interests_api)
+app.register_blueprint(chat_met_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
@@ -136,6 +138,12 @@ def uvote():
     users = User.query.all()
     return render_template("uvote.html", user_data=users)
 
+@app.route('/chatdata')
+@login_required
+def chatData():
+    users = User.query.all()
+    return render_template("chatData.html", user_data=users)
+
 @app.route('/users/settings')
 @login_required
 def usettings():
@@ -147,6 +155,7 @@ def usettings():
 def ureports():
     users = User.query.all()
     return render_template("ureports.html", user_data=users)
+    
 
 # Helper function to extract uploads for a user (ie PFP image)
 @app.route('/uploads/<path:filename>')
