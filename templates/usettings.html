@@ -21,7 +21,7 @@
 
         .card {
             background-color: var(--card-background-color);
-            color: var(--card-text-color);
+            color: var (--card-text-color);
             margin-bottom: 20px;
         }
 
@@ -49,15 +49,16 @@
 {% block body %}
     <div class="container mt-5">
         <h1><strong>Admin Settings</strong></h1>
+        <p>Contact the creator: <a href="mailto:pranavs22638@gmail.com">pranavs22638@gmail.com</a></p>
         <div class="row">
             <div class="col-6">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">General Settings</h5>
                         <p class="card-text">
-                            Configure general application settings such as site name, description, and contact information.
+                            Configure general application settings such as description and contact information.
                         </p>
-                        <a href="#" class="btn btn-primary">Edit General Settings</a>
+                        <a href="{{ url_for('general_settings') }}" class="btn btn-primary">Edit General Settings</a>
                     </div>
                 </div>
             </div>
