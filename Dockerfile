@@ -1,5 +1,11 @@
 FROM docker.io/python:3.12
 
+WORKDIR /home/ubuntu/prism_backend
+
+RUN ./scripts/db_backup.py
+RUN ./scripts/db_init.py
+RUN ./scripts/db_restore.py
+
 WORKDIR /
 
 # --- [Install python and pip] ---
