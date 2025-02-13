@@ -272,7 +272,6 @@ def load_data_from_json(directory='backup'):
             data[table] = json.load(f)
     return data
 
-# Restore data to the new database
 def restore_data(data):
     with app.app_context():
         users = User.restore(data['users'])
