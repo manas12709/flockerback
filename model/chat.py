@@ -75,8 +75,8 @@ class Chat(db.Model):
         return {
             "id": self.id,
             "message": self._message,
-            "user_name": user.name if user else None,
-            "channel_name": channel.name if channel else None
+            "user_id": user.id if user else None,
+            "channel_id": channel.id if channel else None
         }
 
     def update(self, data):
