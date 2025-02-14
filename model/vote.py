@@ -88,21 +88,34 @@ class Vote(db.Model):
     @staticmethod
     def restore(data):
         """
-        Restore votes from a list of dictionaries.
+        Restore votes from a list of dictionaries, ensuring no duplicates are created.
 
         Args:
             data (list): List of dictionaries containing vote data.
-        
+
         Returns:
             list: List of restored Vote objects.
         """
         restored_classes = {}
+
         for vote_data in data:
-            vote = Vote(vote_data['vote_type'], vote_data['user_id'], vote_data['post_id'])
-            vote.create()
-            restored_classes[vote_data['id']] = vote
-            
+            existing_vote = Vote.query.filter_by(
+                _user_id=vote_data['user_id'], _post_id=vote_data['post_id']
+            ).first()
+
+            if existing_vote:
+                # If vote exists, update it if needed (optional)
+                if existing_vote._vote_type != vote_data['vote_type']:
+                    existing_vote.update(vote_data['vote_type'])
+                restored_classes[vote_data['id']] = existing_vote
+            else:
+                # If vote doesn't exist, create a new one
+                vote = Vote(vote_data['vote_type'], vote_data['user_id'], vote_data['post_id'])
+                vote.create()
+                restored_classes[vote_data['id']] = vote
+
         return restored_classes
+
 
 
 def initVotes():
