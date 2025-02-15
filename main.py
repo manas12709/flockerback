@@ -149,6 +149,12 @@ def uvote():
     users = User.query.all()
     return render_template("uvote.html", user_data=users)
 
+@app.route('/postdata')
+@login_required
+def postData():
+    users = User.query.all()
+    return render_template("postData.html", user_data=users)
+
 @app.route('/chatdata')
 @login_required
 def chatData():
