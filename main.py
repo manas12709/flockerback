@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 from flask import current_app
 from werkzeug.security import generate_password_hash
 import shutil
+from functools import wraps
 
 # import "objects" from "this" project
 from __init__ import app, db, login_manager  # Key Flask objects 
@@ -101,6 +102,14 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.role != 'Admin':
+            return redirect(url_for('unauthorized'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -111,7 +120,10 @@ def login():
             login_user(user)
             if not is_safe_url(next_page):
                 return abort(400)
-            return redirect(next_page or url_for('index'))
+            if user.role == 'Admin':
+                return redirect(next_page or url_for('index'))
+            else:
+                return redirect(next_page or url_for('user_index'))
         else:
             error = 'Invalid username or password.'
     return render_template("login.html", error=error, next=next_page)
@@ -128,8 +140,20 @@ def page_not_found(e):
 
 @app.route('/')  # connects default URL to index() function
 def index():
-    print("Home:", current_user)
-    return render_template("index.html")
+    if current_user.is_authenticated and current_user.role == 'Admin':
+        return render_template("index.html")
+    elif current_user.is_authenticated:
+        return render_template("user_index.html")
+    return render_template("login.html")
+
+@app.route('/unauthorized')
+def unauthorized():
+    return redirect(url_for('index')), 401
+
+@app.route('/user_index')
+@login_required
+def user_index():
+    return render_template("user_index.html")
 
 @app.route('/users/table')
 @login_required
@@ -144,36 +168,42 @@ def u2table():
     return render_template("u2table.html", user_data=users)
 
 @app.route('/users/votedata')
+@admin_required
 @login_required
 def uvote():
     users = User.query.all()
     return render_template("uvote.html", user_data=users)
 
 @app.route('/postdata')
+@admin_required
 @login_required
 def postData():
     users = User.query.all()
     return render_template("postData.html", user_data=users)
 
 @app.route('/chatdata')
+@admin_required
 @login_required
 def chatData():
     users = User.query.all()
     return render_template("chatData.html", user_data=users)
 
 @app.route('/languagedata')
+@admin_required
 @login_required
 def languageData():
     users = User.query.all()
     return render_template("languageData.html", user_data=users)
 
 @app.route('/users/settings')
+@admin_required
 @login_required
 def usettings():
     users = User.query.all()
     return render_template("usettings.html", user_data=users)
 
 @app.route('/users/reports')
+@admin_required
 @login_required
 def ureports():
     users = User.query.all()
@@ -181,6 +211,7 @@ def ureports():
 
 @app.route('/general-settings', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def general_settings():
     settings = Settings.query.first()
     if request.method == 'POST':
@@ -198,6 +229,7 @@ def uploaded_file(filename):
  
 @app.route('/users/delete/<int:user_id>', methods=['DELETE'])
 @login_required
+@admin_required
 def delete_user(user_id):
     user = User.query.get(user_id)
     if user:
@@ -207,6 +239,7 @@ def delete_user(user_id):
 
 @app.route('/users/reset_password/<int:user_id>', methods=['POST'])
 @login_required
+@admin_required
 def reset_password(user_id):
     if current_user.role != 'Admin':
         return jsonify({'error': 'Unauthorized'}), 403
