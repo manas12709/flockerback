@@ -161,6 +161,12 @@ def chatData():
     users = User.query.all()
     return render_template("chatData.html", user_data=users)
 
+@app.route('/languagedata')
+@login_required
+def languageData():
+    users = User.query.all()
+    return render_template("languageData.html", user_data=users)
+
 @app.route('/users/settings')
 @login_required
 def usettings():
