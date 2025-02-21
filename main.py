@@ -148,7 +148,7 @@ def index():
 
 @app.route('/unauthorized')
 def unauthorized():
-    return redirect(url_for('index')), 401
+    return render_template('unauthorized.html'), 401
 
 @app.route('/user_index')
 @login_required
