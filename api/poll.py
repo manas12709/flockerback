@@ -18,7 +18,7 @@ class PollAPI:
         """
         GET request handler: Read all polls.
         """
-        # @token_required()
+        @token_required()
         def get(self):
             try:
                 # Retrieve all poll records
@@ -35,7 +35,7 @@ class PollAPI:
         """
         POST request handler: Create a new poll.
         """
-        # @token_required()
+        @token_required()
         def post(self):
             try:
                 data = request.get_json()
@@ -62,7 +62,7 @@ class PollAPI:
                 return {'message': f'Error inserting poll data: {str(e)}'}, 500
 
     class _Update(Resource): # U = Update
-        # @token_required()
+        @token_required()
         def put(self):
             try:
                 data = request.get_json()
@@ -103,7 +103,7 @@ class PollAPI:
                 return {'message': f'Error updating poll: {str(e)}'}, 500
 
     class _Delete(Resource): # D = Delete
-        # @token_required()
+        @token_required()
         def delete(self):
             try:
                 data = request.get_json()
