@@ -582,7 +582,7 @@ def initUsers():
                 uid=app.config['DEFAULT_USER'],
                 password=app.config['DEFAULT_PASSWORD'],
                 pfp='hop.png',
-                interests="Programming, Mathematics, Leadership",
+                interests="Inventing, Reading, Physics",
                 followers="niko"
             ),
             User(
