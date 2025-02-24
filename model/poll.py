@@ -94,8 +94,8 @@ def initPolls():
     Initialize the Poll table with default data.
     """
     polls = [
-        Poll("Toby", "Jazz"),
-        Poll("Niko", "Rock")
+        Poll("Thomas Edison", "Jazz"),
+        Poll("Grace Hopper", "Rock")
     ]
     for poll in polls:
         try:

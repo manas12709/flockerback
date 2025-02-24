@@ -133,6 +133,18 @@ class UserAPI:
             else:
                 user = current_user  # Non-admin can only update themselves
 
+            # Check if followers exist before updating
+            if 'followers' in body:
+                new_followers = body['followers'].split(',')
+                valid_followers = []
+                for follower in new_followers:
+                    follower = follower.strip()
+                    if User.query.filter_by(_uid=follower).first():
+                        valid_followers.append(follower)
+                    else:
+                        return {'message': f'Follower {follower} does not exist'}, 400
+                body['followers'] = ', '.join(valid_followers)
+
             # Update the user object with the new data
             user.update(body)
 
@@ -258,9 +270,23 @@ class UserAPI:
                 return {'message': 'No followers found for this user'}, 404
             return jsonify(followers)
 
+    class _Following(Resource):
+        @token_required()
+        def get(self):
+            """
+            Return the users that the authenticated user is following as a JSON object.
+            """
+            current_user = g.current_user
+            following = User.query.filter(User._followers.contains(current_user.uid)).all()
+            following_list = [user.uid for user in following]
+            if not following_list:
+                return {'message': 'No users found that you are following'}, 404
+            return jsonify(following_list)
+
 # Register the API resources with the Blueprint
 api.add_resource(UserAPI._ID, '/id')
 api.add_resource(UserAPI._BULK_CRUD, '/users')
 api.add_resource(UserAPI._CRUD, '/user')
 api.add_resource(UserAPI._Security, '/authenticate')
 api.add_resource(UserAPI._Followers, '/followers')
+api.add_resource(UserAPI._Following, '/following')
