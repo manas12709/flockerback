@@ -195,6 +195,13 @@ def languageData():
     users = User.query.all()
     return render_template("languageData.html", user_data=users)
 
+@app.route('/pollData')
+@admin_required
+@login_required
+def pollData():
+    users = User.query.all()
+    return render_template("pollData.html", user_data=users)
+
 @app.route('/users/settings')
 @admin_required
 @login_required
