@@ -78,7 +78,7 @@
 <script>
     async function fetchLanguages() {
         try {
-            const response = await fetch(`/api/languages`);
+            const response = await fetch(`/api/languagemet`);
             if (!response.ok) throw new Error('Failed to fetch languages');
             const languages = await response.json();
             const languageBody = document.getElementById('languageBody');
@@ -108,7 +108,7 @@
             document.getElementById('languageId').value = '';
             document.getElementById('languageName').value = '';
             document.getElementById('languageCreator').value = '';
-            document.getElementById('languagePopularity').value = '';
+            document.getElementById('languagePopularity').value = 0;
             $('#languageModal').modal('show');
         });
 
@@ -118,7 +118,7 @@
             const creator = document.getElementById('languageCreator').value;
             const popularity = document.getElementById('languagePopularity').value;
             const method = languageId ? 'PUT' : 'POST';
-            const url = '/api/languages';
+            const url = '/api/languagemet';
             const payload = languageId ? { id: languageId, name: name, creator: creator, popularity: popularity } : { name: name, creator: creator, popularity: popularity };
 
             try {
@@ -142,7 +142,7 @@
             const languageId = document.getElementById('deleteLanguageId').value;
 
             try {
-                const response = await fetch('/api/languages', {
+                const response = await fetch('/api/languagemet', {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: languageId })
@@ -163,9 +163,9 @@
                 const languageId = e.target.getAttribute('data-id');
                 const row = e.target.closest('tr');
                 document.getElementById('languageId').value = languageId;
-                document.getElementById('languageName').value = row.getAttribute('data-name');
-                document.getElementById('languageCreator').value = row.getAttribute('data-creator');
-                document.getElementById('languagePopularity').value = row.getAttribute('data-popularity');
+                document.getElementById('languageName').value = row.children[1].innerText;
+                document.getElementById('languageCreator').value = row.children[2].innerText;
+                document.getElementById('languagePopularity').value = row.children[3].innerText;
                 $('#languageModal').modal('show');
             } else if (e.target && e.target.classList.contains('delete-btn')) {
                 const languageId = e.target.getAttribute('data-id');
