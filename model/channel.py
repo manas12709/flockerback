@@ -166,7 +166,7 @@ def initChannels():
         daily_question = Group.query.filter_by(_name='Daily Question').first()
         interestchannel = Group.query.filter_by(_name='Interests').first()
         prism_channels = [
-            Channel(name='What are your opinions on the engines of F1 Cars?', group_id=random_chatroom.id),
+            Channel(name='How can readers impact the world through inventions?', group_id=random_chatroom.id),
             Channel(name='Daily Question', group_id=daily_question.id),
             Channel(name='Interests', group_id=interestchannel.id)
         ]
