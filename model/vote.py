@@ -130,8 +130,8 @@ def initVotes():
         votes = [
             Vote(vote_type='upvote', user_id=1, post_id=5),
             Vote(vote_type='downvote', user_id=2, post_id=5),
-            Vote(vote_type='upvote', user_id=2, post_id=1),
-            Vote(vote_type='downvote', user_id=2, post_id=3),
+            Vote(vote_type='downvote', user_id=3, post_id=7),
+            Vote(vote_type='downvote', user_id=7, post_id=6),
         ]
         
         for vote in votes:
