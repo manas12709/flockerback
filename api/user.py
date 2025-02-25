@@ -283,6 +283,28 @@ class UserAPI:
                 return {'message': 'No users found that you are following'}, 404
             return jsonify(following_list)
 
+    class _MutualConnections(Resource):
+        @token_required()
+        def get(self):
+            """
+            Return the mutual connections of the authenticated user as a JSON object.
+            """
+            current_user = g.current_user
+            followers = [f.strip() for f in current_user.followers.split(',')] if current_user.followers else []
+            mutual_connections = {}
+
+            for follower_uid in followers:
+                follower = User.query.filter_by(_uid=follower_uid).first()
+                if follower and follower.followers:
+                    follower_followers = [f.strip() for f in follower.followers.split(',')]
+                    for mutual_follower_uid in follower_followers:
+                        if mutual_follower_uid in followers and mutual_follower_uid != current_user.uid:
+                            if follower_uid not in mutual_connections:
+                                mutual_connections[follower_uid] = []
+                            mutual_connections[follower_uid].append(mutual_follower_uid)
+
+            return jsonify(mutual_connections)
+
 # Register the API resources with the Blueprint
 api.add_resource(UserAPI._ID, '/id')
 api.add_resource(UserAPI._BULK_CRUD, '/users')
@@ -290,3 +312,4 @@ api.add_resource(UserAPI._CRUD, '/user')
 api.add_resource(UserAPI._Security, '/authenticate')
 api.add_resource(UserAPI._Followers, '/followers')
 api.add_resource(UserAPI._Following, '/following')
+api.add_resource(UserAPI._MutualConnections, '/mutual_connections')
