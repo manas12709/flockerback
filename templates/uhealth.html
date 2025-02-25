@@ -1,0 +1,158 @@
+{% extends "layouts/base.html" %}
+{% set project = "Reports" %}
+
+{% block style %}
+    <style>
+        :root {
+            --primary-color: #ff0000; /* Red */
+            --secondary-color: #ffffff; /* White */
+            --accent-color: #000000; /* Black */
+            --background-color: #1a1a1a; /* Dark background */
+            --card-background-color: #333333; /* Darker card background */
+            --card-text-color: #ffffff; /* White text */
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--secondary-color);
+        }
+
+        .card {
+            background-color: var(--card-background-color);
+            color: var(--card-text-color);
+            margin-bottom: 20px;
+        }
+
+        h1, h5 {
+            color: var(--primary-color);
+        }
+
+        .mark {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .chart-container {
+            position: relative;
+            margin: 20px auto;
+            height: 200px;
+            width: 200px;
+        }
+
+        .chart-container.small {
+            height: 150px;
+            width: 150px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1><strong>Health Reports</strong></h1>
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">CPU Usage</h5>
+                        <div class="chart-container">
+                            <canvas id="cpuChart"></canvas>
+                        </div>
+                        <p class="card-text" id="cpuInfo">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Disk Usage</h5>
+                        <div class="chart-container small">
+                            <canvas id="diskChart"></canvas>
+                        </div>
+                        <p class="card-text" id="diskInfo">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block background %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    async function fetchHealthData() {
+        try {
+            const response = await fetch('/api/health');
+            if (!response.ok) throw new Error('Failed to fetch health data');
+            const data = await response.json();
+
+            // Update CPU info
+            const cpuInfo = document.getElementById('cpuInfo');
+            cpuInfo.innerHTML = `
+                <strong>User:</strong> ${data.cpu.user}%<br>
+                <strong>System:</strong> ${data.cpu.system}%<br>
+                <strong>Idle:</strong> ${data.cpu.idle}%
+            `;
+            const cpuUsedPercentage = 100 - parseFloat(data.cpu.idle);
+            updateChart(cpuChart, [cpuUsedPercentage, 100 - cpuUsedPercentage]);
+
+            // Update Disk info
+            const diskInfo = document.getElementById('diskInfo');
+            diskInfo.innerHTML = data.disk.map(disk => `
+                <strong>Filesystem:</strong> ${disk.filesystem}<br>
+                <strong>Size:</strong> ${disk.size}<br>
+                <strong>Used:</strong> ${disk.used}<br>
+                <strong>Available:</strong> ${disk.avail}<br>
+                <strong>Use%:</strong> ${disk['use%']}<br><br>
+            `).join('');
+            const diskUsedPercentage = parseFloat(data.disk[0]['use%']);
+            updateChart(diskChart, [diskUsedPercentage, 100 - diskUsedPercentage]);
+
+        } catch (error) {
+            console.error('Error fetching health data:', error);
+        }
+    }
+
+    function updateChart(chart, data) {
+        chart.data.datasets[0].data = data;
+        chart.update();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctxCpu = document.getElementById('cpuChart').getContext('2d');
+        const ctxDisk = document.getElementById('diskChart').getContext('2d');
+
+        window.cpuChart = new Chart(ctxCpu, {
+            type: 'pie',
+            data: {
+                labels: ['Used', 'Idle'],
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#ff0000', '#ffffff']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        window.diskChart = new Chart(ctxDisk, {
+            type: 'pie',
+            data: {
+                labels: ['Used', 'Free'],
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#ff0000', '#ffffff']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        fetchHealthData();  
+        setInterval(fetchHealthData, 1000); // Update every 1 second
+    });
+</script>
+{% endblock %}

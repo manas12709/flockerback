@@ -229,6 +229,13 @@ def uhelp():
     users = User.query.all()
     return render_template("uhelp.html", user_data=users)
 
+@app.route('/users/health', methods=['GET'])
+@admin_required
+@login_required
+def uhealth():
+    users = User.query.all()
+    return render_template("uhealth.html", user_data=users)
+
 @app.route('/general-settings', methods=['GET', 'POST'])
 @login_required
 @admin_required
