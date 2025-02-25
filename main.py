@@ -35,6 +35,7 @@ from api.user_met import user_met_api
 from api.post_met import post_met_api
 from api.poll_met import poll_met_api
 from api.health import health_api
+from api.help import help_api
 
 from api.leaderboard import leaderboard_api
 
@@ -53,6 +54,7 @@ from model.poll import Poll, initPolls
 from model.school_classes import SchoolClass, initSchoolClasses
 from model.language import Language, initLanguages
 from model.chat import Chat, initChats
+from model.help_request import HelpRequest
 
 from model.topusers import TopUser
 from model.topinterests import TopInterest, initTopInterests
@@ -80,7 +82,9 @@ app.register_blueprint(vote_met_api)
 app.register_blueprint(language_met_api)
 app.register_blueprint(user_met_api)
 app.register_blueprint(post_met_api)
-
+app.register_blueprint(poll_met_api)
+app.register_blueprint(help_api)
+app.register_blueprint(health_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
@@ -217,6 +221,13 @@ def usettings():
 def ureports():
     users = User.query.all()
     return render_template("ureports.html", user_data=users)
+
+@app.route('/users/help')
+@admin_required
+@login_required
+def uhelp():
+    users = User.query.all()
+    return render_template("uhelp.html", user_data=users)
 
 @app.route('/general-settings', methods=['GET', 'POST'])
 @login_required
