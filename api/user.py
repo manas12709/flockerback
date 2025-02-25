@@ -52,19 +52,9 @@ class UserAPI:
         @token_required()
         def get(self):
             """
-            If no 'id' parameter is provided, return all users.
-            If 'id' is provided, return that specific user's data.
+            Retrieve all users.
             """
             current_user = g.current_user
-            user_id = request.args.get('id')  # Get 'id' parameter from query string
-
-            if user_id:
-                user = User.query.filter_by(id=user_id).first()
-                if user:
-                    return jsonify(user.read())
-                return {'message': f'User with ID {user_id} not found'}, 404
-
-            # If no 'id' is provided, return all users
             users = User.query.all()  # extract all users from the database
 
             # Prepare a JSON list of user dictionaries
@@ -78,7 +68,6 @@ class UserAPI:
                 json_ready.append(user_data)
 
             return jsonify(json_ready)
-
 
     class _CRUD(Resource):
         """
