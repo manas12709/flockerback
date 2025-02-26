@@ -79,6 +79,30 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">RAM Usage</h5>
+                        <div class="chart-container small">
+                            <canvas id="ramChart"></canvas>
+                        </div>
+                        <p class="card-text" id="ramInfo">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Network Interfaces</h5>
+                        <div class="chart-container small">
+                            <canvas id="networkChart"></canvas>
+                        </div>
+                        <p class="card-text" id="networkInfo">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -114,6 +138,25 @@
             const diskUsedPercentage = parseFloat(data.disk[0]['use%']);
             updateChart(diskChart, [diskUsedPercentage, 100 - diskUsedPercentage]);
 
+            // Update RAM info
+            const ramInfo = document.getElementById('ramInfo');
+            ramInfo.innerHTML = `
+                <strong>Total:</strong> ${data.ram.total}<br>
+                <strong>Used:</strong> ${data.ram.used}<br>
+                <strong>Free:</strong> ${data.ram.free}
+            `;
+            const ramUsedPercentage = (parseFloat(data.ram.used) / parseFloat(data.ram.total)) * 100;
+            updateChart(ramChart, [ramUsedPercentage, 100 - ramUsedPercentage]);
+
+            // Update Network info
+            const networkInfo = document.getElementById('networkInfo');
+            networkInfo.innerHTML = data.network.map(net => `
+                <strong>Interface:</strong> ${net.interface}<br>
+                <strong>Addresses:</strong><br> ${net.addresses.join('<br>')}
+            `).join('<br><br>');
+            const networkInterfaces = data.network.length;
+            updateChart(networkChart, [networkInterfaces, 100 - networkInterfaces]);
+
         } catch (error) {
             console.error('Error fetching health data:', error);
         }
@@ -127,6 +170,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctxCpu = document.getElementById('cpuChart').getContext('2d');
         const ctxDisk = document.getElementById('diskChart').getContext('2d');
+        const ctxRam = document.getElementById('ramChart').getContext('2d');
+        const ctxNetwork = document.getElementById('networkChart').getContext('2d');
 
         window.cpuChart = new Chart(ctxCpu, {
             type: 'pie',
@@ -158,6 +203,58 @@
             type: 'pie',
             data: {
                 labels: ['Used', 'Free'],
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#ff0000', '#ffffff']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        });
+
+        window.ramChart = new Chart(ctxRam, {
+            type: 'pie',
+            data: {
+                labels: ['Used', 'Free'],
+                datasets: [{
+                    data: [0, 100],
+                    backgroundColor: ['#ff0000', '#ffffff']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        });
+
+        window.networkChart = new Chart(ctxNetwork, {
+            type: 'pie',
+            data: {
+                labels: ['Interfaces', 'Unused'],
                 datasets: [{
                     data: [0, 100],
                     backgroundColor: ['#ff0000', '#ffffff']
