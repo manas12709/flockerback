@@ -43,11 +43,17 @@
             height: 150px;
             width: 150px;
         }
+
+        .glow-container {
+            box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color), 0 0 40px var(--primary-color);
+            padding: 20px;
+            border-radius: 10px;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
+    <div class="container mt-5 glow-container">
         <h1><strong>Health Reports</strong></h1>
         <div class="row">
             <div class="col-6">
@@ -78,6 +84,7 @@
 
 {% block background %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
     async function fetchHealthData() {
         try {
@@ -132,7 +139,18 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                            return value + '%';
+                        }
+                    }
+                }
             }
         });
 
@@ -147,7 +165,18 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                            return value + '%';
+                        }
+                    }
+                }
             }
         });
 
