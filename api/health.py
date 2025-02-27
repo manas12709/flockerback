@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource
 import subprocess
 import re
+import os
 
 # Blueprint for Poll API
 health_api = Blueprint('health_api', __name__, url_prefix='/api')
@@ -10,12 +11,14 @@ api = Api(health_api)
 
 class HealthAPI(Resource):
     def get(self):
-
-        # Run system commands
-        raw_ram = subprocess.check_output(["free", "-h"]).decode("utf-8")
-        raw_cpu = subprocess.check_output(["top", "-bn1"]).decode("utf-8")
-        raw_disk = subprocess.check_output(["df", "-h"]).decode("utf-8")
-        raw_network = subprocess.check_output(["ip", "addr"]).decode("utf-8")
+        try:
+            # Run system commands with elevated privileges where needed
+            raw_ram = subprocess.check_output(["sudo", "free", "-h"], stderr=subprocess.DEVNULL).decode("utf-8")
+            raw_cpu = subprocess.check_output(["sudo", "top", "-bn1"], stderr=subprocess.DEVNULL).decode("utf-8")
+            raw_disk = subprocess.check_output(["sudo", "df", "-h"], stderr=subprocess.DEVNULL).decode("utf-8")
+            raw_network = subprocess.check_output(["sudo", "ip", "addr"], stderr=subprocess.DEVNULL).decode("utf-8")
+        except subprocess.CalledProcessError:
+            return jsonify({"error": "Permission denied or command failed"}), 500
 
         # Parse RAM (only total, used, free)
         ram_info = {}
