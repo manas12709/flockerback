@@ -54,7 +54,7 @@ from model.poll import Poll, initPolls
 from model.school_classes import SchoolClass, initSchoolClasses
 from model.language import Language, initLanguages
 from model.chat import Chat, initChats
-from model.help_request import HelpRequest
+from model.help_request import HelpRequest, initHelpRequests
 
 from model.topusers import TopUser
 from model.topinterests import TopInterest, initTopInterests
@@ -222,13 +222,6 @@ def ureports():
     users = User.query.all()
     return render_template("ureports.html", user_data=users)
 
-@app.route('/users/help')
-@admin_required
-@login_required
-def uhelp():
-    users = User.query.all()
-    return render_template("uhelp.html", user_data=users)
-
 @app.route('/users/health', methods=['GET'])
 @admin_required
 @login_required
@@ -298,6 +291,7 @@ def generate_data():
     initPlayers()
     initLanguages()
     initPolls()
+    initHelpRequests()
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):

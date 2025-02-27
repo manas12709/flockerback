@@ -4,23 +4,30 @@
 {% block style %}
     <style>
         :root {
-            --primary-color: #ff0000; /* Red */
-            --secondary-color: #ffffff; /* White */
-            --accent-color: #000000; /* Black */
-            --background-color: #1a1a1a; /* Dark background */
-            --card-background-color: #333333; /* Darker card background */
-            --card-text-color: #ffffff; /* White text */
+            --primary-color: #e74c3c; /* Red */
+            --secondary-color: #ecf0f1; /* Light Gray */
+            --accent-color: #c0392b; /* Dark Red */
+            --background-color: #000000; /* Black Background */
+            --card-background-color: #2c3e50; /* Darker Card Background */
+            --card-text-color: #ecf0f1; /* Light Gray Text */
         }
 
         body {
             background-color: var(--background-color);
             color: var(--secondary-color);
+            font-family: 'Arial', sans-serif;
         }
 
         .card {
             background-color: var(--card-background-color);
             color: var(--card-text-color);
             margin-bottom: 20px;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
         }
 
         h1, h5 {
@@ -176,104 +183,104 @@
         window.cpuChart = new Chart(ctxCpu, {
             type: 'pie',
             data: {
-                labels: ['Used', 'Idle'],
-                datasets: [{
-                    data: [0, 100],
-                    backgroundColor: ['#ff0000', '#ffffff']
-                }]
+            labels: ['Used', 'Idle'],
+            datasets: [{
+                data: [0, 100],
+                backgroundColor: ['#e74c3c', '#2c3e50']
+            }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    datalabels: {
-                        color: '#ffffff',
-                        font: {
-                            weight: 'bold'
-                        },
-                        formatter: (value, context) => {
-                            return value + '%';
-                        }
-                    }
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                color: '#ecf0f1',
+                font: {
+                    weight: 'bold'
+                },
+                formatter: (value, context) => {
+                    return value + '%';
                 }
+                }
+            }
             }
         });
 
         window.diskChart = new Chart(ctxDisk, {
             type: 'pie',
             data: {
-                labels: ['Used', 'Free'],
-                datasets: [{
-                    data: [0, 100],
-                    backgroundColor: ['#ff0000', '#ffffff']
-                }]
+            labels: ['Used', 'Free'],
+            datasets: [{
+                data: [0, 100],
+                backgroundColor: ['#e74c3c', '#2c3e50']
+            }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    datalabels: {
-                        color: '#ffffff',
-                        font: {
-                            weight: 'bold'
-                        },
-                        formatter: (value, context) => {
-                            return value + '%';
-                        }
-                    }
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                color: '#ecf0f1',
+                font: {
+                    weight: 'bold'
+                },
+                formatter: (value, context) => {
+                    return value + '%';
                 }
+                }
+            }
             }
         });
 
         window.ramChart = new Chart(ctxRam, {
             type: 'pie',
             data: {
-                labels: ['Used', 'Free'],
-                datasets: [{
-                    data: [0, 100],
-                    backgroundColor: ['#ff0000', '#ffffff']
-                }]
+            labels: ['Used', 'Free'],
+            datasets: [{
+                data: [0, 100],
+                backgroundColor: ['#e74c3c', '#2c3e50']
+            }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    datalabels: {
-                        color: '#ffffff',
-                        font: {
-                            weight: 'bold'
-                        },
-                        formatter: (value, context) => {
-                            return value + '%';
-                        }
-                    }
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                color: '#ecf0f1',
+                font: {
+                    weight: 'bold'
+                },
+                formatter: (value, context) => {
+                    return value + '%';
                 }
+                }
+            }
             }
         });
 
         window.networkChart = new Chart(ctxNetwork, {
             type: 'pie',
             data: {
-                labels: ['Interfaces', 'Unused'],
-                datasets: [{
-                    data: [0, 100],
-                    backgroundColor: ['#ff0000', '#ffffff']
-                }]
+            labels: ['Interfaces', 'Unused'],
+            datasets: [{
+                data: [0, 100],
+                backgroundColor: ['#e74c3c', '#2c3e50']
+            }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    datalabels: {
-                        color: '#ffffff',
-                        font: {
-                            weight: 'bold'
-                        },
-                        formatter: (value, context) => {
-                            return value + '%';
-                        }
-                    }
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                color: '#ecf0f1',
+                font: {
+                    weight: 'bold'
+                },
+                formatter: (value, context) => {
+                    return value + '%';
                 }
+                }
+            }
             }
         });
 
@@ -281,4 +288,4 @@
         setInterval(fetchHealthData, 1000); // Update every 1 second
     });
 </script>
-{% endblock %}
+        {% endblock %}
