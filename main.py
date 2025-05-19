@@ -10,6 +10,7 @@ from flask import current_app
 from werkzeug.security import generate_password_hash
 import shutil
 from functools import wraps
+from flask_socketio import SocketIO, send, emit
 
 # import "objects" from "this" project
 from __init__ import app, db, login_manager  # Key Flask objects 
@@ -275,6 +276,30 @@ def reset_password(user_id):
 
 # Create an AppGroup for custom commands
 custom_cli = AppGroup('custom', help='Custom commands')
+
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+players = []  # Keep a list of players and scores
+
+@socketio.on("player_join")
+def handle_player_join(data):
+    name = data.get("name")
+    if name:
+        players.append({"name": name, "score": 0})
+        emit("player_joined", {"name": name}, broadcast=True)
+
+@socketio.on("player_score")
+def handle_player_score(data):
+    name = data.get("name")
+    score = data.get("score", 0)
+    for p in players:
+        if p["name"] == name:
+            p["score"] = score
+            break
+    # Sort and broadcast leaderboard
+    leaderboard = sorted(players, key=lambda x: x["score"], reverse=True)
+    emit("leaderboard_update", leaderboard, broadcast=True)
+
 
 # Define a command to run the data generation functions
 @custom_cli.command('generate_data')
