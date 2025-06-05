@@ -1,6 +1,7 @@
 # section.py
 from sqlite3 import IntegrityError
 from __init__ import app, db
+from model.group import Group
 
 class Section(db.Model):
     """

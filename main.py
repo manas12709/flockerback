@@ -18,74 +18,21 @@ from __init__ import app, db, login_manager  # Key Flask objects
 from api.user import user_api 
 from api.pfp import pfp_api
 from api.post import post_api
-from api.channel import channel_api
-from api.group import group_api
-from api.section import section_api
-from api.player import player_api
-from api.poll import poll_api
-from api.teaminfo import team_member_api
-from api.school_classes import school_class_api
-from api.chat import chat_api
-from api.language import language_api
-from api.interests import interests_api  # Import the new interests API
-from api.chat_met import chat_met_api
-from api.vote_met import vote_met_api
-from api.language_met import language_met_api
 from api.usettings import settings_api
-from api.user_met import user_met_api
-from api.post_met import post_met_api
-from api.poll_met import poll_met_api
-from api.health import health_api
-from api.help import help_api
-
-from api.leaderboard import leaderboard_api
-
-from api.vote import vote_api
-from api.teaminfo import team_member_api
 # database Initialization functions
 from model.user import User, initUsers
 from model.section import Section, initSections
-from model.group import Group, initGroups
-from model.channel import Channel, initChannels
 from model.post import Post, initPosts
-from model.vote import Vote, initVotes
-from model.player import Player, initPlayers
-from model.teaminfo import TeamMember, initTeamMembers
-from model.poll import Poll, initPolls
-from model.school_classes import SchoolClass, initSchoolClasses
-from model.language import Language, initLanguages
-from model.chat import Chat, initChats
-from model.help_request import HelpRequest, initHelpRequests
-
-from model.topusers import TopUser
-from model.topinterests import TopInterest, initTopInterests
+from model.channel import Channel, initChannels
+from model.group import Group, initGroups
 from model.usettings import Settings  # Import the Settings model
 # server only Views
+
 
 # register URIs for api endpoints
 app.register_blueprint(user_api)
 app.register_blueprint(pfp_api) 
 app.register_blueprint(post_api)
-app.register_blueprint(channel_api)
-app.register_blueprint(group_api)
-app.register_blueprint(section_api)
-app.register_blueprint(vote_api)
-app.register_blueprint(school_class_api)
-app.register_blueprint(chat_api)
-app.register_blueprint(team_member_api)
-app.register_blueprint(poll_api)
-app.register_blueprint(leaderboard_api)
-app.register_blueprint(player_api)
-app.register_blueprint(language_api)
-app.register_blueprint(interests_api)
-app.register_blueprint(chat_met_api)
-app.register_blueprint(vote_met_api)
-app.register_blueprint(language_met_api)
-app.register_blueprint(user_met_api)
-app.register_blueprint(post_met_api)
-app.register_blueprint(poll_met_api)
-app.register_blueprint(help_api)
-app.register_blueprint(health_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"
@@ -296,9 +243,6 @@ def handle_player_score(data):
         if p["name"] == name:
             p["score"] = score
             break
-    # Sort and broadcast leaderboard
-    leaderboard = sorted(players, key=lambda x: x["score"], reverse=True)
-    emit("leaderboard_update", leaderboard, broadcast=True)
 
 
 # Define a command to run the data generation functions
@@ -309,14 +253,7 @@ def generate_data():
     initGroups()
     initChannels()
     initPosts()
-    initChats()
-    initVotes()
-    initTeamMembers()
-    initSchoolClasses()
-    initPlayers()
-    initLanguages()
-    initPolls()
-    initHelpRequests()
+
     
 # Backup the old database
 def backup_database(db_uri, backup_uri):
@@ -337,13 +274,6 @@ def extract_data():
         data['sections'] = [section.read() for section in Section.query.all()]
         data['groups'] = [group.read() for group in Group.query.all()]
         data['channels'] = [channel.read() for channel in Channel.query.all()]
-        data['school_classes'] = [school_class.read() for school_class in SchoolClass.query.all()]
-        data['chat'] = [chat.read() for chat in Chat.query.all()]
-        data['votes'] = [vote.read() for vote in Vote.query.all()]
-        data['team_members'] = [team_member.read() for team_member in TeamMember.query.all()]
-        data['languages'] = [language.read() for language in Language.query.all()]
-        data['top_interests'] = [top_interest.read() for top_interest in TopInterest.query.all()]
-        data['polls'] = [poll.read() for poll in Poll.query.all()]
     return data
 
 # Save extracted data to JSON files

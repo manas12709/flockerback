@@ -5,7 +5,6 @@ from datetime import datetime
 from __init__ import app
 from api.jwt_authorize import token_required
 from model.post import Post
-from model.channel import Channel
 
 """
 This Blueprint object is used to define APIs for the Post model.

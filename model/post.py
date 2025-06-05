@@ -4,6 +4,7 @@ from sqlalchemy import Text, JSON
 from sqlalchemy.exc import IntegrityError
 from __init__ import app, db
 from model.user import User
+
 from model.channel import Channel
 
 class Post(db.Model):
