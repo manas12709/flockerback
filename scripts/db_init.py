@@ -54,12 +54,15 @@ def main():
             tables = inspector.get_table_names()
             
             if tables:
-                print("Warning, you are about to lose all data in the database!")
-                print("Do you want to continue? (y/n)")
-                response = input()
-                if response.lower() != 'y':
-                    print("Exiting without making changes.")
-                    sys.exit(0)
+                if not os.environ.get("FORCE_DB_INIT"):
+                    print("Warning, you are about to lose all data in the database!")
+                    print("Do you want to continue? (y/n)")
+                    response = input()
+                    if response.lower() != 'y':
+                        print("Exiting without making changes.")
+                        sys.exit(0)
+                else:
+                    print("FORCE_DB_INIT set, skipping prompt and continuing.")
                     
             # Backup the old database
             backup_database(app.config['SQLALCHEMY_DATABASE_URI'], app.config['SQLALCHEMY_BACKUP_URI'])

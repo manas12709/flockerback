@@ -20,6 +20,22 @@ class Channel(db.Model):
             "group_id": self.group_id
         }
 
+    @staticmethod
+    def restore(data):
+        """
+        Restore channels from a list of dictionaries.
+        """
+        for channel_data in data:
+            _ = channel_data.pop('id', None)  # Remove 'id' if present
+            name = channel_data.get("name")
+            group_id = channel_data.get("group_id")
+            channel = Channel.query.filter_by(name=name).first()
+            if not channel:
+                channel = Channel(name=name, group_id=group_id)
+                db.session.add(channel)
+        db.session.commit()
+        print("Channels restored.")
+
 def initChannels():
     """
     The initChannels function creates the Channel table and adds tester data to the table.

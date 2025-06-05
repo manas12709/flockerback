@@ -20,6 +20,22 @@ class Group(db.Model):
             "section_id": self.section_id
         }
 
+    @staticmethod
+    def restore(data, users=None):
+        """
+        Restore groups from a list of dictionaries.
+        """
+        for group_data in data:
+            _ = group_data.pop('id', None)  # Remove 'id' if present
+            name = group_data.get("name")
+            section_id = group_data.get("section_id")
+            group = Group.query.filter_by(name=name).first()
+            if not group:
+                group = Group(name=name, section_id=section_id)
+                db.session.add(group)
+        db.session.commit()
+        print("Groups restored.")
+
 def initGroups():
     """
     The initGroups function creates the Group table and adds tester data to the table.

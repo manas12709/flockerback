@@ -1,22 +1,24 @@
-FROM docker.io/python:3.12
+FROM python:3.12
 
 WORKDIR /home/ubuntu/prism_backend
 
-RUN ./scripts/db_backup.py
-RUN ./scripts/db_init.py
-RUN ./scripts/db_restore.py
-
-WORKDIR /
-
-# --- [Install python and pip] ---
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y python3 python3-pip git
-COPY . /
-
+# Copy requirements and install dependencies first (for better caching)
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install gunicorn
 
-ENV GUNICORN_CMD_ARGS="--workers=3 --bind=0.0.0.0:8505"
+# Now copy the rest of your code
+COPY . .
+
+# (Optional) Make scripts executable if you want to run them directly
+# RUN chmod +x scripts/*.py
+
+# Run your scripts using python (not as executables)
+RUN python scripts/db_backup.py
+RUN FORCE_DB_INIT=1 python scripts/db_init.py
+RUN python scripts/db_restore.py
+
+WORKDIR /
 
 EXPOSE 8505
 

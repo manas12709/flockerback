@@ -299,14 +299,6 @@ def restore_data(data):
         _ = Section.restore(data['sections'])
         _ = Group.restore(data['groups'], users)
         _ = Channel.restore(data['channels'])
-        _ = SchoolClass.restore(data['school_classes'])
-        _ = Poll.restore(data['polls'])
-        _ = Vote.restore(data['votes'])
-        _ = TeamMember.restore(data['team_members'])
-        _ = Chat.restore(data['chat'])
-        # _ = Player.restore(data['player'])
-        _ = TopInterest.restore(data['top_interests'])
-        _ = Language.restore(data['languages'])
     print("Data restored to the new database.")
 
 # Define a command to backup data
