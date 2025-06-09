@@ -20,7 +20,7 @@ RUN python scripts/db_restore.py
 
 WORKDIR /
 
-EXPOSE 8505
+EXPOSE 8696
 
 # Define environment variable
 ENV FLASK_ENV=deployed
